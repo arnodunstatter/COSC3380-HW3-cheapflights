@@ -1,6 +1,6 @@
 .login-container {
-    height: 500px;
-    width: 500px;
+    height: 400px;
+    width: 400px;
     background-color: white;
     border-radius: 30px;
     margin-top: 20%;
@@ -14,7 +14,7 @@
 .login-header {
     font-family: 'Lobster', cursive;
     color: #ff004c;
-    font-size: 1.5rem;
+    font-size: 2rem;
 }
 
 .login-guest-btn {
@@ -22,7 +22,7 @@
     border-style: none;
     padding: 20px;
     width: 200px;
-    background-color: #ff3b75;
+    background-color: #C60039;
     color: white;
     border-radius: 10px;
     transition: 0.2s ease;
@@ -31,12 +31,12 @@
 
 
 .login-guest-btn:hover {
-    background-color: #ff6995;
+    background-color: #d61c51;
     cursor: pointer;
 }
 
 .login-admin-btn:hover {
-    background-color: #b0254e;
+    background-color: #d61c51;
     cursor: pointer;
 }
 

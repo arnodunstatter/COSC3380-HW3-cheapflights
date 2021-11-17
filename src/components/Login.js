@@ -1,10 +1,7 @@
 import React from 'react';
 import './CSS/Login.css'
 
-import {
-    BrowserRouter as Router,
-    Link
-  } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Login () {
     return (
@@ -13,7 +10,9 @@ function Login () {
             <Link to='/search-flight'>
                 <button className='login-guest-btn'>Book a flight</button>
             </Link>
+            <Link to='/view-flight'>
             <button className='login-admin-btn'>View a booked flight</button>
+            </Link>
         </div>
     );
 }

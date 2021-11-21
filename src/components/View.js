@@ -40,8 +40,8 @@ function View() {
                 <p>4:00pm</p>
             </div>
 
-            <Link to='/'>
-            <button className='view-goback-btn'>Go back</button>
+            <Link className='view-btn' to='/'>
+                <button className='view-goback-btn'>Go back</button>
             </Link>
         </div>
     );

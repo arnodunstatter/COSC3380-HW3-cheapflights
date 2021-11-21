@@ -6,11 +6,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: white;
-  display: flex;
-  justify-content: center;
+  box-sizing: border-box;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+div, p, form {
+  caret-color: transparent;
+}
+
+input {
+  caret-color: black;
 }

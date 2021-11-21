@@ -4,11 +4,11 @@
     justify-content: center;
     height: 500px;
     width: 500px;
-    margin-top: 80px;
     box-shadow: 0 0 10px #d9d9d9;
     border-radius: 20px;
     font-size: 1rem;
     padding: 20px;
+    margin-top: 80px;
 }
 
 .view-info {
@@ -22,15 +22,22 @@
     color: #303030;
 }
 
+.view-btn {
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+}
+
 .view-goback-btn {
     margin-top: 20px;
     width: 150px;
-    align-self: center;
     border-style: none;
     padding: 15px;
     color: white;
     background-color: #C60039;
     border-radius: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
     transition: 0.2s ease;
 }
 

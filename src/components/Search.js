@@ -4,18 +4,34 @@ import './CSS/Search.css'
 function Search() {
     return (
         <div className='search-container'>
-            <div className='search-place'>
-            <input className='search-from' placeholder='From'></input>
-            <input className='search-goingto' placeholder='Going to'></input>
+            <div className='search-selection'>
+                <div className='search-selection-btn'>
+                    Roundtrip
+                </div>
+                <div className='search-selection-btn'>
+                    One-Way
+                </div>
             </div>
-            
 
-            <div className='search-dates'>
-                <input className='search-checkin' placeholder='Check-in'></input>
-                <input className='search-checkout' placeholder='Check-out'></input>
+            <div className='search-form'>
+                <div className='search-inputs'>
+                    <div className='search-icon'><i className="fas fa-map-marker-alt"></i></div>
+                    <input className='search-from' placeholder='From'></input>
+                </div>
+                <div className='search-inputs'>
+                    <div className='search-icon'><i className="fas fa-map-marker-alt"></i></div>
+                    <input className='search-goingto' placeholder='Going to'></input>
+                </div>
+                <div className='search-inputs'>
+                    <div className='search-icon'><i className="fas fa-calendar-alt"></i></div>
+                    <input className='search-departure' placeholder='Departing'></input>
+                </div>
+                <div className='search-inputs'>
+                    <div className='search-icon'><i className="fas fa-calendar-alt"></i></div>
+                    <input className='search-arrival' placeholder='Arrival'></input>
+                </div>
             </div>
-            
-            <input className='search-travelers' placeholder='Travelers'></input>
+
             <button className='search-btn'>Search</button>
         </div>
     );

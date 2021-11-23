@@ -57,3 +57,4 @@ ORDER  BY distance_to_tokyo;
 --     RETURN sqrt(x * x + y * y);                               
 -- END  
 -- $$ LANGUAGE plpgsql;
+

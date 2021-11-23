@@ -37,16 +37,16 @@ VALUES
     ) as distance;
 
 --example: converting from miles to meters and calculating distance between Tokyo(HND) to the other 14 airports
-SELECT airport_name,country
-(
-  point(a.longitude, a.latitude)<@>point(b.longitude, b.latitude)
-) * 1609.344 AS distance_to_tokyo
-FROM flight_test AS a,
-lateral (
-  SELECT airport_code,latitude, longitude FROM flight_test WHERE airport_code = 'HND'
-) AS b
-WHERE a.airport_code <> b.airport_code
-ORDER BY distance_to_tokyo;
+SELECT a.airport_name AS airport_name,
+       a.country      AS country,
+       ( Point(a.longitude, a.latitude) <@> Point(b.longitude, b.latitude) ) *
+       1609.344
+                      AS distance_to_tokyo
+FROM   flight_test AS a
+       INNER JOIN flight_test AS b
+               ON b.airport_code = 'HND'
+WHERE  a.airport_code <> b.airport_code
+ORDER  BY distance_to_tokyo; 
 
 --the following function to calculate the approximate distance between coordinates; ex. SELECT distance(13.912,100.607,19.436,-99.072) ==> output: 13398.57333
 -- CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$

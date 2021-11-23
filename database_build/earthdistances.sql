@@ -36,7 +36,7 @@ VALUES
       (SELECT point(longitude,latitude) FROM flight_test WHERE airport_code = 'IAH')
     ) as distance;
 
---example: converting from miles to meters and calculating distance between Tokyo(HND) to the other 14 airports
+--example2: converting from miles to meters and calculating distance between Tokyo(HND) to the other 14 airports
 SELECT a.airport_name AS airport_name,
        a.country      AS country,
        ( Point(a.longitude, a.latitude) <@> Point(b.longitude, b.latitude) ) *

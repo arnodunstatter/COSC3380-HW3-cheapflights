@@ -1,0 +1,67 @@
+.option-container {
+    color: #61616B;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 0.8rem;
+    margin-right: 200px;
+}
+
+.option-container:hover {
+    color: #95002B;
+    cursor: pointer;
+}
+
+.option-popup {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 50px 100px 0 0;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 0 10px #d9d9d9;
+    height: 200px;
+    width: 300px;
+}
+
+.login-inputs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 10px;
+    border-style:solid;
+    border-width: thin;
+    border-color: #8c8c8c;
+    padding: 8px;
+}
+
+.login-icon {
+    color: #5e5e5e;
+}
+
+.login-inputs input {
+    border-style: none;
+    outline: none;
+    margin-left: 5px;
+}
+
+.login-admin-btn:hover {
+    background-color: #d61c51;
+    cursor: pointer;
+}
+
+.login-admin-btn {
+    border-style: none;
+    margin-top: 20px;
+    padding: 10px;
+    width: 200px;
+    border-radius: 10px;
+    color: white;
+    background-color: #c61139;
+    transition: 0.2s ease;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+}

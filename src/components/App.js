@@ -1,8 +1,6 @@
-
-
-import Login from './Login';
 import Search from './Search';
 import View from './View';
+import Option from './Option';
 
 import './CSS/App.css';
 
@@ -21,12 +19,13 @@ function App() {
           <Link className='link' to='/'>
             <p className='app-logo'>Cheap<span>Flights</span></p>
           </Link>
+          
+          <Option/>
         </header>
 
         <section>
           <Routes>
-            <Route path='/' element={<Login/>} />
-            <Route path='/search-flight' element={<Search/>} />
+            <Route path='/' element={<Search/>} />
             <Route path='/view-flight' element={<View/>} />
           </Routes>
         </section>

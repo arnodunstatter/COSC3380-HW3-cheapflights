@@ -1,4 +1,3 @@
-gates = ["A01", "A02", "A03", "A04", "A05", "B01", "B02", "B03", "B04", "B05"];
 
 //departureDates = December 1st, 2021 through December 7th, 2021
 //departure times, for each day, a flight leaves every 1 hours
@@ -6,8 +5,6 @@ gates = ["A01", "A02", "A03", "A04", "A05", "B01", "B02", "B03", "B04", "B05"];
 
 //departure times auto generated
 //SELECT * FROM generate_series('2021-12-01 00:00:00'::timestamptz,'2021-12-07 23:59:59', '1 hours') as departure;
-// SELECT * FROM generate_series('2021-12-01 00:00:00'::timestamptz,'2021-12-07 23:59:59', '1 hours') as arrival;
-
 
 main();
 

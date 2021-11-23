@@ -1,7 +1,7 @@
 CREATE extension if not exists cube;
 CREATE extension if not exists earthdistance;
 
-CREATE TABLE "flight_test" (
+CREATE TABLE "airport_cities" (
   "airport_code" char(3),
   "airport_name" varchar(100),
   "city_name" varchar(40),
@@ -11,7 +11,7 @@ CREATE TABLE "flight_test" (
   PRIMARY KEY ("airport_code")
 );
 
-INSERT INTO flight_test (airport_code,airport_name,city_name,country,latitude,longitude)
+INSERT INTO airport_cities (airport_code, airport_name, city_name,country,latitude,longitude)
 VALUES
   ('BKK','Bangkok International Airport','Bangkok','Thailand',13.912,100.607),
   ('ICN','Licenciado Benito Juarez International Airport','Mexico City','Mexico',19.436,-99.072),
@@ -24,7 +24,7 @@ VALUES
   ('GMP','Gimpo Airport','Seoul','South Korea',37.558,126.791),
   ('SEA','Seattle–Tacoma International Airport','Seattle','USA',47.449,-122.309),
   ('SFO','San Francisco International Airport','San Francisco','USA',37.619,-122.375),
-  ('MEL','Belbourne Essendon Airport','Melbourne','Australia',-37.728,144.902),
+  ('MEL','Melbourne Essendon Airport','Melbourne','Australia',-37.728,144.902),
   ('TPE','Taoyuan International Airport','Taipei','Taiwan',25.080,121.232),
   ('TOJ','Torrejon Airport','Madrid','Spain',40.371,-3.785),
   ('PEK','Beijing Capital International Airport','Beijing','China',40.080,116.584);

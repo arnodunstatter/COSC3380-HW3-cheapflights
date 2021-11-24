@@ -1,0 +1,2 @@
+psql -h fanny.db.elephantsql.com -p 5432 -d hrpqbrjx -U hrpqbrjx
+xlF9qioPrZmMaHnm-x473GN8-NcYrkve

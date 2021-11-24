@@ -14,7 +14,7 @@ CREATE TABLE "airport_cities" (
 INSERT INTO airport_cities (airport_code, airport_name, city_name,country,latitude,longitude)
 VALUES
   ('BKK','Bangkok International Airport','Bangkok','Thailand',13.912,100.607),
-  ('ICN','Licenciado Benito Juarez International Airport','Mexico City','Mexico',19.436,-99.072),
+  ('SVO','Sheremetyevo Airport','Moscow','Russia',55.972,37.415),
   ('LHR','Heathrow Airport','London','England',51.477,-0.461),
   ('JFK','John F. Kennedy International Airport','New York City','USA',40.640,-73.779),
   ('LAX','Los Angeles International Airport','Los Angeles','USA',33.942,-118.408),

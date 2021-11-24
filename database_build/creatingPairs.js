@@ -1,4 +1,9 @@
-function makeGatePairs() {
+const {Client} = require('pg');
+const creds = require('./creds.json');
+const client = new Client(creds);
+
+async function makeGatePairs() {
+  const client = new Client(creds);
   var gates = ["A01", "A02", "A03", "A04", "A05", "B01", "B02", "B03", "B04", "B05"];
   var arrivalGatesArray = [];
   var departureGatesArray = [];
@@ -22,9 +27,10 @@ function makeGatePairs() {
   }
   console.log("departure gate:", departureGatesArray);
   console.log("arrival gate:", arrivalGatesArray);
+  return [departureGatesArray, arrivalGatesArray];
 }
 
-function makeAirportPairs() {
+async function makeAirportPairs() {
   var airport_code = ["BKK", "ICN", "LHR", "JFK", "LAX", "MNL", "IAH", "HND", "GMP", "SEA", "SFO", "MEL", "TPE", "TOJ", "PEK"]
   var arrivalAirportArray = [];
   var departureAirportArray = [];
@@ -46,11 +52,31 @@ function makeAirportPairs() {
       console.log(depAirport[i], arrAirport[i]);
     }
   }
+
   console.log("departure airport:", departureAirportArray);
   console.log("arrival airport:", arrivalAirportArray);
+  return [arrivalAirportArray, departureAirportArray];
 }
 
+async function main() {
+  await makeAirportPairs()
+    .then((res) => {
+      let result = res;
+      console.log(result);
+    })
+    .catch((err) => console.log(err));
 
-makeAirportPairs();
-console.log("--------------------------------")
-makeGatePairs();
+
+
+  console.log("--------------------------------")
+
+
+  await makeGatePairs()
+    .then((res) => {
+      let result = res;
+      console.log(result);
+    })
+    .catch((err) => console.log(err));
+
+}
+main();

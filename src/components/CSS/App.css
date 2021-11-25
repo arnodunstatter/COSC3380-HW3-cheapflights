@@ -4,7 +4,7 @@
 }
 
 .app-container header {
-  height: 10vh;
+  height: 8vh;
   min-height: 50px;
   color: white;
   position: fixed;
@@ -19,8 +19,8 @@
 }
 
 .app-logo {
-  color:#ff004c;
-  margin-left: 20px;
+  color:#C60039;
+  margin-left: 200px;
   font-family: 'Anton', sans-serif;
   font-size: 1.5rem;
   cursor: pointer;
@@ -33,7 +33,6 @@
 .app-container section {
   display: flex;
   justify-content: center;
-  align-items: center;
   min-height: 100vh;
 }
 

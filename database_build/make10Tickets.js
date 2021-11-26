@@ -24,11 +24,16 @@ async function main() {
             //depart_date timestamp, seat_class varchar(10), book_ref int, passport_no varchar(9), flight_no int
             var ticket = [];
 
-            //pushing the first flight departure_time
+            //old depart_date
+            //pushing the first flight departure_time 
             //to change flight number, change OFFSET; OFFSET 0 == first flight_no in flights table, OFFSET 1 == second flight_no...etc
-            var depart_date_sql = `SELECT departure_time FROM flights ORDER BY flight_no asc LIMIT 1 OFFSET 0;`;
-            var depart_date = await client.query(depart_date_sql);
-            depart_date = depart_date.rows[0]["departure_time"];
+            // var depart_date_sql = `SELECT departure_time FROM flights ORDER BY flight_no asc LIMIT 1 OFFSET 0;`;
+            // var depart_date = await client.query(depart_date_sql);
+            // depart_date = depart_date.rows[0]["departure_time"];
+            // ticket.push(depart_date);
+
+            //new depart_date
+            var depart_date = `current_date + interval '5 days'`;
             ticket.push(depart_date);
 
             //push seat class
@@ -58,14 +63,16 @@ async function main() {
             ticket.push(flight_no);
 
             tickets.push(ticket)
-            console.log(ticket);
+            // console.log(tickets[i][0]);
+            // console.log(`INSERT INTO tickets (depart_date, seat_class, book_ref, passport_no, flight_no)
+            // VALUES (${tickets[i][0]}, '${tickets[i][1]}', ${tickets[i][2]},'${tickets[i][3]}',${tickets[i][4]});`)
             await client.query(
                 `INSERT INTO tickets (depart_date, seat_class, book_ref, passport_no, flight_no)
                 VALUES (${tickets[i][0]}, '${tickets[i][1]}', ${tickets[i][2]},'${tickets[i][3]}',${tickets[i][4]});`
             );
 
         }
-
+        // console.log(tickets);
         throw ("Ending Correctly");
     } catch (e) {
         console.error(e);
@@ -94,4 +101,5 @@ async function main() {
 //         ELSE 0 END    FROM passengers_bookings LEFT JOIN bookings USING(book_ref);
 
 
-//         SELECT CASE WHEN EXISTS(SELECT economy_seats FROM passengers_bookings LEFT JOIN bookings USING(book_ref) WHERE economy_seats = 1 AND book_ref = 1) THEN 'economy' ELSE 'business' END;
+//SELECT CASE WHEN EXISTS(SELECT economy_seats FROM passengers_bookings LEFT JOIN bookings USING(book_ref) 
+//WHERE economy_seats = 1 AND book_ref = 1) THEN 'economy' ELSE 'business' END;

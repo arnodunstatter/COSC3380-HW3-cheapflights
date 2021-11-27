@@ -17,8 +17,7 @@ async function main() {
             throw (e);
         }
 
-        var queryStr = "SELECT * FROM table_name;";
-        await client.query(queryStr);
+        await findFlights(client, "2021-12-01", "Houston", "Los Angeles");
 
 
         throw ("Ending Correctly");
@@ -35,7 +34,7 @@ async function main() {
 
 async function findFlights(client, departure_date, departure_city, arrival_city)
 {
-    var limitOfConnections = 1;
+    var applicableFlights = []; //applicablFlights = [ [directFlight1], [directFlight2], [ Flight1,Flight2 ] ]
 
     //get departureAirportCode 
     var departureAirportCode = await client.query(
@@ -53,17 +52,48 @@ async function findFlights(client, departure_date, departure_city, arrival_city)
     arrivalAirportCode = arrivalAirportCode.rows[0]["airport_code"];
     
     var directFlights = await client.query(
-        `SELECT *
+        `SELECT flight_no
             FROM flights
             WHERE departure_airport_code = '${departureAirportCode}' AND 
                 arrival_airport_code = '${arrivalAirportCode}' AND 
                 DATE(departure_time) = '${departure_date}';`
     );
-
     directFlights = directFlights.rows;
-    console.log(directFlights);
-    
-}
-https://stackoverflow.com/questions/56795743/how-to-convert-map-to-array-of-object/56795800
+    //convert from array of maps to array of arrays
+    for(let i = 0; i < directFlights.length; ++i) 
+        directFlights[i] = Object.values(directFlights[i]);
+    //push into applicableFlights and package each flight into an internal array for consistent formatting of applicableFlights
+    // i.e. applicableFlights = [ [directFlights1], [directFlights2], [ Flight1,Flight2 ] ]
+        for(let i = 0; i < directFlights.length; ++i) 
+        applicableFlights.push([directFlights[i]]);
 
-applicableFlights = [[directFlights1],[directFlights2], [ [Flight1],[Flight2] ] ]
+    
+    var connectingFlights = await client.query(
+    `SELECT f1.flight_no AS flight_no_1, f2.flight_no AS flight_no_2
+        FROM flights AS f1
+        JOIN flights AS f2
+            ON f1.arrival_airport_code = f2.departure_airport_code
+        WHERE f2.departure_time > f1.arrival_time AND
+            f1.departure_airport_code = '${departureAirportCode}' AND
+            f2.arrival_airport_code = '${arrivalAirportCode}' AND
+            DATE(f1.departure_time) = '${departure_date}'
+        ORDER BY f2.departure_time ASC
+        LIMIT 20;`
+    );
+
+    
+    connectingFlights = connectingFlights.rows;
+    //convert from array of maps to array of arrays
+    for(let i = 0; i < connectingFlights.length; ++i) 
+        connectingFlights[i] = Object.values(connectingFlights[i]);
+    //push into applicableFlights
+    for(let i = 0; i < connectingFlights.length; ++i)
+        applicableFlights.push(connectingFlights[i]);
+    
+    return applicableFlights; //when flight details are needed, they can be retrieved using the flight_no's in this array
+
+   //departure time, arrival time, how many stops there are, (where the stop is) and then total booking price before tax 
+   //(if not same for everything it would be based on time, less time obvsly more costly, subtract money based on the amount of stops (aka more stops = cheaper))
+    //and total time span of the whole booking
+    //time between last arrival and first departure
+}

@@ -1,6 +1,0 @@
-begin
-INSERT INTO passengers_bookings (passport_no, book_ref)
-    VALUES (${ppn}, ${br});
-
-INSERT INTO bookings (book_ref)
-end

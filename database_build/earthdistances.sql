@@ -32,8 +32,8 @@ VALUES
 --example: longitude has to be first before latitude, that's just how the function works; distance between JFK and IAH output is in miles; 
 
   SELECT (
-      (SELECT point(longitude,latitude) FROM flight_test WHERE airport_code = 'JFK') <@> 
-      (SELECT point(longitude,latitude) FROM flight_test WHERE airport_code = 'IAH')
+      (SELECT point(longitude,latitude) FROM airport_cities WHERE airport_code = 'JFK') <@> 
+      (SELECT point(longitude,latitude) FROM airport_cities WHERE airport_code = 'IAH')
     ) as distance;
 
 --example2: converting from miles to meters and calculating distance between Tokyo(HND) to the other 14 airports

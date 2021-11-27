@@ -17,35 +17,9 @@ async function main() {
             throw (e);
         }
 
+        //react code goes here to grab the booking that user canceled var book_ref = <button></button>
+        var book_ref = 4;
 
-/** start cancellation transaction */
-            //if customer requests for a cancellation, select book_ref for the flight they want to cancel and set canceled to true
-
-            //react code goes here to grab the booking that user canceled var book_ref = <button></button>
-            await client.query(`BEGIN; 
-                                 UPDATE bookings SET canceled = 't'
-                                 WHERE book_ref = ${book_ref};
-                                 COMMIT;`);
-            
-             var canceled_booking = await client.query(`SELECT book_ref, canceled, economy_seats, business_seats FROM bookings
-                                                        JOIN tickets USING(book_ref)
-                                                        JOIN flights USING(flight_no)
-                                                        WHERE canceled = 't'
-                                                        AND book_ref = ${book_ref};`);
-                                                         
-            //*cancellation add seat back transaction*/
-                if(canceled_booking.rows[1] == 't')
-                {
-                await client.query(
-                    `UPDATE flights
-                        SET available_economy_seats = available_economy_seats + 1
-                        WHERE flight_no = ${flight_no};`);
-
-                await client.query(
-                    `UPDATE flights
-                        SET available_business_seats = available_business_seats + 1
-                        WHERE flight_no = ${flight_no};`);
-                }
                 
 
 
@@ -59,3 +33,54 @@ async function main() {
     }
 
 }
+
+async function cancelBooking(client, book_ref)
+{
+    /** start cancellation transaction */
+            //if customer requests for a cancellation, select book_ref for the flight they want to cancel and set canceled to true
+
+    try{
+        //start our transaction
+        var book_ref = 15;
+        await client.query("BEGIN;");
+
+        //update the canceled status in the bookings
+        await client.query(
+            `UPDATE bookings 
+                SET canceled = 't'
+                    WHERE book_ref = ${book_ref};`
+        );
+        
+        //retrieve information about the canceled booking and the relevant flight_no      
+        var canceled_booking = await client.query(
+            `SELECT economy_seats, business_seats, flight_no
+                FROM bookings
+                    JOIN tickets
+                        ON bookings.book_ref = tickets.book_ref
+                    WHERE bookings.book_ref = ${book_ref};`
+        );
+        canceled_booking = canceled_booking.rows[0]; //a map with keys: "economy_seats", "business_seats", "flight_no"
+        var economy_seats = canceled_booking["economy_seats"];
+        var business_seats = canceled_booking["business_seats"];
+                                                        
+        //update available seats on the flight
+        await client.query(
+            `UPDATE flights
+                SET available_economy_seats = available_economy_seats + ${economy_seats}
+                WHERE flight_no = ${flight_no};`);
+
+        await client.query(
+            `UPDATE flights
+                SET available_business_seats = available_business_seats + ${business_seats}
+                WHERE flight_no = ${flight_no};`);
+        
+
+        await client.query("COMMIT;");
+    }
+    catch(e)
+    {
+        await client.query("ROLLBACK;");
+        throw(e); //will bypass the "Ending Correctly" throw
+    }
+}
+

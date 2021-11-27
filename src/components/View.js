@@ -5,7 +5,7 @@ import './CSS/View.css';
 import { Link } from "react-router-dom";
 
 function View() {
-    return(
+    return (
         <div className='view-container'>
             <div className='view-info'>
                 <p className='view-p'>Name:</p>

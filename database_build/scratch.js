@@ -1,19 +1,48 @@
+main();
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-  }
+async function main() {
+    //now we make our client using our creds
+    const {
+        Client
+    } = require('pg');
+    const creds = require('./creds.json');
+    const client = new Client(creds);
 
-function arrivalAirportCode(departure_airport_code)
-{
-    var airport_codes = ["BKK", "LHR", "JFK", "LAX", "MNL", "IAH", "HND", "GMP", "SEA", "SFO", "MEL", "TPE", "TOJ", "PEK", "MEX"];
-    var arrival_airport_code = airport_codes[getRandomInt(0,airport_codes.length-1)];
-    while(arrival_airport_code == departure_airport_code)
-        arrival_airport_code = airport_codes[getRandomInt(0,airport_codes.length-1)];
-    return arrival_airport_code;
+    try {
+        try {
+            client.connect();
+
+        } catch (e) {
+            console.log("Problem connecting client");
+            throw (e);
+        }
+        
+        // var directFlights = await client.query(
+        //     `SELECT *
+        //         FROM flights
+        //         WHERE departure_airport_code = '${departureAirportCode}' AND 
+        //             arrival_airport_code = '${arrivalAirportCode}' AND 
+        //             DATE(departure_time) = '${departure_date}';`
+        
+        var flights = await client.query(
+            `SELECT * FROM flights LIMIT 10;`
+        );
+        flights=flights.rows;
+        console.log("Array of maps:");
+        console.log(flights);
+        for(let i = 0; i < flights.length;++i)
+            flights[i] = Object.values(flights[i])
+            console.log(Object.values(flights[i]))
+        console.log("Array of arrays?");
+        console.log(flights);
+
+        throw ("Ending Correctly");
+    } catch (e) {
+        console.error(e);
+        client.end();
+        console.log("Disconneced");
+        console.log("Process ending");
+        process.exit();
+    }
+
 }
-
-for (let i = 0; i < 200; ++i)
-    if ("BKK" == arrivalAirportCode("BKK"))
-        console.log("You fucked up");

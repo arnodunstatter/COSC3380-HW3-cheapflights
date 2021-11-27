@@ -1,4 +1,4 @@
-main();
+main(); 
 
 async function main() {
     //now we make our client using our creds

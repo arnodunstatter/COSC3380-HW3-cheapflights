@@ -126,7 +126,7 @@ async function main() {
             );
 
                     
-            //la fin
+            //la fin 
             await client.query("COMMIT;");
         }
         catch(e)

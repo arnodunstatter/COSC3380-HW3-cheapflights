@@ -1,7 +1,7 @@
 main();
 
 async function main() {
-    //now we make our client using our creds
+    //now we make our client using our creds 
     const {
         Client
     } = require('pg');

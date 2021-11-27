@@ -33,8 +33,7 @@ async function main() {
                                                         WHERE canceled = 't'
                                                         AND book_ref = ${book_ref};`);
                                                          
-            // **cancellation add seat back transaction*/
-
+            //*cancellation add seat back transaction*/
                 if(canceled_booking.rows[1] == 't')
                 {
                 await client.query(

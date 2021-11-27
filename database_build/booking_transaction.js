@@ -30,7 +30,7 @@ async function main() {
             var DOB = "1986-12-22";
             var discount_code = "none";
             var card_no = "1111222233334444";
-
+            
             
             await client.query("BEGIN;"); //start our transaction
             
@@ -65,12 +65,14 @@ async function main() {
             }
             
             //2nd: let's add the booking to bookings
-                //by starting with an insert statement this will fill in columns with default values (book_ref, booking_time, economy_base_amt)
+                //by starting with an insert statement this will fill in columns with default values (book_ref, booking_time)
                 //insert into economy_seats, business_seats, discount_code, card_no
                 //leaves base_amount, discounted_amount, taxes, and total_amount to be updated later
+            console.log(`INSERT INTO bookings (economy_seats, business_seats, discount_code, card_no)
+            VALUES (${economySeats},${businessSeats},${discount_code},${card_no});`);
             await client.query(
                 `INSERT INTO bookings (economy_seats, business_seats, discount_code, card_no)
-                    VALUES (${economySeats},${businessSeats},${discount_code},${card_no});`
+                    VALUES (${economySeats},${businessSeats},'${discount_code}',${card_no});`
             );
                 //in order to update we need to figure out which book_ref we're working on - the highest book_ref should be the one we just made in the above insert
             var book_ref = await client.query(`SELECT MAX(book_ref) AS mbr FROM bookings;`);
@@ -100,27 +102,27 @@ async function main() {
                     SET base_amount=${base_amount},
                         discounted_amount=${discounted_amount},
                         taxes=${taxes},
-                        total_amoun=${total_amount}
+                        total_amount=${total_amount}
                     WHERE book_ref = ${book_ref};`
             );
-            
+
             //3rd: let's do passengers
             await client.query(
                 `INSERT INTO passengers
-                VALUES (${passport_no},${first_name},${last_name},${email_address},${phone_no},${DOB});`
+                VALUES ('${passport_no}','${first_name}','${last_name}','${email_address}','${phone_no}', CAST('${DOB}' AS DATE));`
             );
             
             //4th: lets do passengers_bookings
             await client.query(
                 `INSERT INTO passengers_bookings
-                VALUES (${passport_no},${book_ref});`
+                VALUES ('${passport_no}',${book_ref});`
             );
             
             //5th: let's do tickets
                 //INSERT INTO SELECT coupled with given values: https://stackoverflow.com/questions/25969/insert-into-values-select-from
             await client.query(
                 `INSERT INTO tickets (depart_time, seat_class, book_ref, passport_no, flight_no)
-                    SELECT departure_time, ${seatClass}, ${book_ref}, ${passport_no}, ${flight_no}
+                    SELECT departure_time, '${seatClass}', ${book_ref}, '${passport_no}', ${flight_no}
                         FROM flights 
                         WHERE flight_no = ${flight_no};`
             );
@@ -170,3 +172,8 @@ async function main() {
 // var taxes = discounted_amount*0.0825;
 // var total_amount = discounted_amount*1.0825;
 // await client.query(`UPDATE bookings SET discounted_amount = ${discounted_amount}, taxes = ${taxes}, total_amount=${total_amount} WHERE book_ref= ${i};`);
+
+async function makeBooking()
+{
+    
+}

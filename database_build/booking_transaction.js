@@ -17,6 +17,7 @@ async function main() {
             throw (e);
         }
 
+        //**after user clicks PAY button, complete bookings and generate tickets */
         //creates entries in bookings, tickets, passengers, and passengers_bookings and updates available_seats in flights
         //the following values will be input by user in the web-form
         var flight_no = "4919"; //this will be 'input' by the user by them selecting a viable flight after they specify the whens and wheres

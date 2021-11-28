@@ -1,8 +1,0 @@
-CREATE TABLE IF NOT EXISTS economy_waitlist
-(
-  position INT, 
-  flight_no VARCHAR(6),
-  passport_no VARCHAR(9),
-  PRIMARY KEY (position, flight_no)
-);
-

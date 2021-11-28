@@ -97,3 +97,15 @@ async function findFlights(client, departure_date, departure_city, arrival_city)
     //and total time span of the whole booking
     //time between last arrival and first departure
 }
+
+
+// SELECT f1.flight_no AS flight_no_1, f2.flight_no AS flight_no_2
+//         FROM flights AS f1
+//         JOIN flights AS f2
+//             ON f1.arrival_airport_code = f2.departure_airport_code
+//         WHERE f2.departure_time > f1.arrival_time AND
+//             f1.departure_airport_code = 'IAH' AND
+//             f2.arrival_airport_code = 'BKK' AND
+//             DATE(f1.departure_time) = '2021-12-01'
+//         ORDER BY f2.departure_time ASC
+//         LIMIT 20

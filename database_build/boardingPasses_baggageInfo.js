@@ -2,9 +2,7 @@ main();
 
 async function main() {
     //now we make our client using our creds
-    const {
-        Client
-    } = require('pg');
+    const { Client } = require('pg');
     const creds = require('./creds.json');
     const client = new Client(creds);
 
@@ -49,6 +47,10 @@ async function makeBoardingPasses(client, ticket_no, baggage_id) {
         var flight_no = flight_no_query.rows[0]["flight_no"];
 
         //3: get seat_no
+        var seat_no_query = await client.query(`SELECT COUNT(seat_class)+1 AS count
+                                                FROM tickets 
+                                                WHERE flight_no = ${flight_no} AND seat_class LIKE 'e%';`)
+
 
         //4: get boarding_no
 
@@ -91,3 +93,16 @@ async function makeBaggageInfo(client, number_of_bags) {
     }
 
 }
+
+//already inserted ticket_no, flight_no, gate_no, baggage_claim, baggage_id
+`SELECT COUNT(*)
+    FROM BOARDING PASSES
+    WHERE flight_no = ${flight_no} AND
+        SEAT_NO ILIKE '${first_letter_of_seatClass}%';` + 1
+`SELECT COUNT(*)
+    FROM boarding_passes
+    WHERE flight_no = ${flight_no};` = boarding_no
+
+    SELECT COUNT(seat_class)+'E' +1 AS count
+    FROM tickets 
+    WHERE flight_no = 4920 AND seat_class LIKE 'e%';

@@ -18,9 +18,9 @@ async function main() {
         }
 
         //react code goes here to grab the booking that user canceled var book_ref = <button></button>
-        var book_ref = 4;
+        var book_ref = 15;
+        await cancelBooking(client, book_ref);
 
-                
 
 
         throw ("Ending Correctly");
@@ -34,14 +34,12 @@ async function main() {
 
 }
 
-async function cancelBooking(client, book_ref)
-{
+async function cancelBooking(client, book_ref) {
     /** start cancellation transaction */
-            //if customer requests for a cancellation, select book_ref for the flight they want to cancel and set canceled to true
+    //if customer requests for a cancellation, select book_ref for the flight they want to cancel and set canceled to true
 
-    try{
+    try {
         //start our transaction
-        var book_ref = 15;
         await client.query("BEGIN;");
 
         //update the canceled status in the bookings
@@ -50,7 +48,7 @@ async function cancelBooking(client, book_ref)
                 SET canceled = 't'
                     WHERE book_ref = ${book_ref};`
         );
-        
+
         //retrieve information about the canceled booking and the relevant flight_no      
         var canceled_booking = await client.query(
             `SELECT economy_seats, business_seats, flight_no
@@ -59,28 +57,29 @@ async function cancelBooking(client, book_ref)
                         ON bookings.book_ref = tickets.book_ref
                     WHERE bookings.book_ref = ${book_ref};`
         );
+
         canceled_booking = canceled_booking.rows[0]; //a map with keys: "economy_seats", "business_seats", "flight_no"
         var economy_seats = canceled_booking["economy_seats"];
         var business_seats = canceled_booking["business_seats"];
-                                                        
-        //update available seats on the flight
-        await client.query(
-            `UPDATE flights
-                SET available_economy_seats = available_economy_seats + ${economy_seats}
-                WHERE flight_no = ${flight_no};`);
 
-        await client.query(
-            `UPDATE flights
+        //update available seats on the flight
+        if (economy_seats == 1) {
+            await client.query(
+                `UPDATE flights
+                SET available_economy_seats = available_economy_seats + ${economy_seats}
+                WHERE flight_no = ${canceled_booking["flight_no"]};`);
+        } else if (business_seats == 1) {
+            await client.query(
+                `UPDATE flights
                 SET available_business_seats = available_business_seats + ${business_seats}
-                WHERE flight_no = ${flight_no};`);
-        
+                WHERE flight_no = ${canceled_booking["flight_no"]};`);
+        }
+
 
         await client.query("COMMIT;");
-    }
-    catch(e)
-    {
+    } catch (e) {
         await client.query("ROLLBACK;");
-        throw(e); //will bypass the "Ending Correctly" throw
+        console.log("ERROR: MAX 10 SEATS ONLY")
+        throw (e); //will bypass the "Ending Correctly" throw
     }
 }
-

@@ -1,0 +1,146 @@
+.checkout-container {
+    display:flex;
+    flex-direction: row;
+    margin-top: 80px;
+}
+
+/*User's personal info*/
+.checkout-confirmation {
+    width: 500px;
+    height: 310px;
+    box-shadow: 0 0 10px #d9d9d9;
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 20px;
+    margin-right: 20px;
+}
+
+.checkout-form-name {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+
+.checkout-form-section {
+    margin-top: 20px;
+}
+
+.checkout-dob {
+    margin-top: 30px;
+}
+/*end of section*/
+
+/*card details*/
+.checkout-payment {
+    width: 500px;
+    height: 100px;
+    box-shadow: 0 0 10px #d9d9d9;
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 20px;
+    margin-top: 20px;
+    margin-right: 20px;
+}
+/*end of section*/
+
+/*review and confirm*/
+.checkout-review {
+    width: 500px;
+    height: 500px;
+    box-shadow: 0 0 10px #d9d9d9;
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 20px;
+    margin: 20px 20px 40px 0;
+}
+
+.checkout-btn-container {
+    display: flex;
+    text-decoration: none;
+}
+/*end of section*/
+
+/*paragraph styles*/
+.checkout-form-h1 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.checkout-form-h4 {
+    font-size: .8rem;
+    color: #61617A;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.checkout-form-info {
+    font-size: .8rem;
+    color: #61617A;
+    margin-top: 50px;
+    margin-bottom: 0;
+}
+
+.checkout-form-info span {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+}
+
+.checkout-form-h2 {
+    font-size: .9rem;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.checkout-form-h3 {
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+/*end of section*/
+
+/*price summary*/
+.checkout-form-dummy {
+    width: 300px;
+    height: 350px;
+}
+.checkout-form {
+    position: fixed;
+    right: 190px;
+    width: 300px;
+    height: 350px;
+    box-shadow: 0 0 10px #d9d9d9;
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 20px;
+}
+
+.checkout-price-summary {
+    margin-top: 20px;
+}
+
+.checkout-price {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.checkout-price-total {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.checkout-price-total .checkout-form-h4 {
+    font-size: .8rem;
+    color: #61617A;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+/*end of section*/

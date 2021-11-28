@@ -1,7 +1,7 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import { styled } from '@mui/material/styles';
-import "./CSS/View.css";
+import "./CSS/Flights.css";
 
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
@@ -292,7 +292,7 @@ function Flights() {
 
 
     return (
-        <div>
+        <div className='flights-container'>
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
                     <EnhancedTableToolbar numSelected={selected.length} />
@@ -380,8 +380,8 @@ function Flights() {
                     label="Dense padding"
                 />
             </Box>
-            <Link className="view-btn" to="/search-flight">
-                <button className="view-goback-btn">Go back</button>
+            <Link className="view-btn" to="/checkout">
+                <button className="view-goback-btn">Checkout</button>
             </Link>
         </div>
     );

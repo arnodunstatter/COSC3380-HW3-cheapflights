@@ -13,13 +13,11 @@
 }
 
 .login-header {
-    font-family: 'Lobster', cursive;
-    color: #ff004c;
     font-size: 2rem;
 }
 
 .login-header span {
-    color: #ff004c;
+    color: #C60039;
     font-family: 'Anton', sans-serif;
 }
 

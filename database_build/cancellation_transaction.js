@@ -18,7 +18,7 @@ async function main() {
         }
 
         //react code goes here to grab the booking that user canceled var book_ref = <button></button>
-        var book_ref = 15;
+        var book_ref = 15; //placeholder varabile for user input for book_ref
         await cancelBooking(client, book_ref);
 
 

@@ -63,12 +63,12 @@ async function cancelBooking(client, book_ref) {
         var business_seats = canceled_booking["business_seats"];
 
         //update available seats on the flight
-        if (economy_seats == 1) {
+        if (economy_seats >= 1) {
             await client.query(
                 `UPDATE flights
                 SET available_economy_seats = available_economy_seats + ${economy_seats}
                 WHERE flight_no = ${canceled_booking["flight_no"]};`);
-        } else if (business_seats == 1) {
+        } else if (business_seats >= 1) {
             await client.query(
                 `UPDATE flights
                 SET available_business_seats = available_business_seats + ${business_seats}

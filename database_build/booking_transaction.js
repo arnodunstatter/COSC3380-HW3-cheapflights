@@ -71,9 +71,10 @@ async function main() {
 // var total_amount = discounted_amount*1.0825;
 // await client.query(`UPDATE bookings SET discounted_amount = ${discounted_amount}, taxes = ${taxes}, total_amount=${total_amount} WHERE book_ref= ${i};`);
 
-async function makeBooking(client, flight_no, seatClass, economySeats, businessSeats, passport_no, first_name, last_name, email_address, phone_no, DOB, discount_code, card_no) {
+async function makeBooking(client, flight_no, economySeats, businessSeats, discount_code, card_no, passengersInfo) //passengersInfo is an array of arrays where each internal array has [passport_no, first_name, last_name, email_address, phone_no, DOB, seatClass]
+{
     try {
-
+        
         await client.query("BEGIN;"); //start our transaction
 
         //1st: let's check that there's still space on that flight and reserve space if there is space
@@ -144,28 +145,39 @@ async function makeBooking(client, flight_no, seatClass, economySeats, businessS
                     total_amount=${total_amount}
                 WHERE book_ref = ${book_ref};`
         );
+        
+        for(let i = 0; i < passengersInfo.length; ++i)
+        {
+            //passengersInfo is an array of arrays where each internal array has [passport_no, first_name, last_name, email_address, phone_no, DOB, seatClass]
+            var passport_no = passengersInfo[i][0];
+            var first_name = passengersInfo[i][1];
+            var last_name = passengersInfo[i][2];
+            var email_address = passengersInfo[i][3];
+            var phone_no = passengersInfo[i][4];
+            var DOB = passengersInfo[i][5];
+            var seatClass = passengersInfo[i][6];
 
-        //3rd: let's do passengers
-        await client.query(
-            `INSERT INTO passengers
-            VALUES ('${passport_no}','${first_name}','${last_name}','${email_address}','${phone_no}', CAST('${DOB}' AS DATE));`
-        );
+            //3rd: let's do passengers
+            await client.query(
+                `INSERT INTO passengers
+                VALUES ('${passport_no}','${first_name}','${last_name}','${email_address}','${phone_no}', CAST('${DOB}' AS DATE));`
+            );
 
-        //4th: lets do passengers_bookings
-        await client.query(
-            `INSERT INTO passengers_bookings
-            VALUES ('${passport_no}',${book_ref});`
-        );
+            //4th: lets do passengers_bookings
+            await client.query(
+                `INSERT INTO passengers_bookings
+                VALUES ('${passport_no}',${book_ref});`
+            );
 
-        //5th: let's do tickets
-        //INSERT INTO SELECT coupled with given values: https://stackoverflow.com/questions/25969/insert-into-values-select-from
-        await client.query(
-            `INSERT INTO tickets (depart_time, seat_class, book_ref, passport_no, flight_no)
-                SELECT departure_time, '${seatClass}', ${book_ref}, '${passport_no}', ${flight_no}
-                    FROM flights 
-                    WHERE flight_no = ${flight_no};`
-        );
-
+            //5th: let's do tickets
+            //INSERT INTO SELECT coupled with given values: https://stackoverflow.com/questions/25969/insert-into-values-select-from
+            await client.query(
+                `INSERT INTO tickets (depart_time, seat_class, book_ref, passport_no, flight_no)
+                    SELECT departure_time, '${seatClass}', ${book_ref}, '${passport_no}', ${flight_no}
+                        FROM flights 
+                        WHERE flight_no = ${flight_no};`
+            );
+        }
 
         //la fin 
         await client.query("COMMIT;");

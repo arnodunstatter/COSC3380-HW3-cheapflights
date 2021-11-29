@@ -15,14 +15,8 @@ async function main() {
             throw (e);
         }
 
-        var result = await client.query("SELECT first_name FROM passengers WHERE first_name = 'Arno';");
-        if (result.rows[0] == undefined)
-            console.log("yup");
-        else
-        {
-            var first_name = result.rows[0]["first_name"];
-            console.log(first_name);
-        }
+        var a = 
+       
 
 
         throw ("Ending Correctly");

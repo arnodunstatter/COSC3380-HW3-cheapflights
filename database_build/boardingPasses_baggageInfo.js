@@ -18,11 +18,14 @@ async function main() {
         }
 
         //**user clicks check-in button, prompt user for number of bags, and then generate boarding passes after they input # of bags*/
+
         var number_of_bags = 2;
-        var ticket_no = 4;
+        var ticket_no = 1;
 
         var baggage_id = await makeBaggageInfo(client, number_of_bags); //user enters number_of_bags, only 0, 1, 2 number of bags allowed
         await makeBoardingPasses(client, ticket_no, baggage_id); //user checks-in, generate boarding passes
+
+
 
 
         throw ("Ending Correctly");
@@ -48,35 +51,66 @@ async function makeBoardingPasses(client, ticket_no, baggage_id) {
         var flight_no_query = await client.query(`SELECT flight_no FROM tickets WHERE ticket_no = ${ticket_no};`);
         var flight_no = flight_no_query.rows[0]["flight_no"];
 
-        //3.1: get economy_seat_no
-        var e_seat_no_query = await client.query(`SELECT COUNT(seat_class)+1 AS count
-                                                FROM tickets 
-                                                WHERE flight_no = ${flight_no} AND seat_class LIKE 'e%';`);
-        var e_seat_position = e_seat_no_query.rows[0]["count"];
-        var e_seat_no = await client.query(`SELECT CONCAT('E', ${e_seat_position});`)
-        var e_seat_no = e_seat_no.rows[0]["concat"];
-        console.log(e_seat_no);
 
-        //3.2: get business_seat_no
-        var b_seat_no_query = await client.query(`SELECT COUNT(seat_class)+1 AS count
-                                                FROM tickets 
-                                                WHERE flight_no = ${flight_no} AND seat_class LIKE 'b%';`);
-        var b_seat_position = b_seat_no_query.rows[0]["count"];
-        var b_seat_no = await client.query(`SELECT CONCAT('B', ${b_seat_position});`)
-        var b_seat_no = b_seat_no.rows[0]["concat"];
-        console.log(b_seat_no);
+        //3: get seat_no by first determining seat_class
+        var seat_class_query = await client.query(`SELECT seat_class FROM tickets WHERE ticket_no = ${ticket_no};`);
+        var seat_class = seat_class_query.rows[0]["seat_class"];
+
+
+        //3.1: get economy_seat_no
+        if (seat_class == "economy") {
+
+            var e_seat_no_query = await client.query(`SELECT COUNT(*)+1
+                                                FROM boarding_passes 
+                                                LEFT JOIN tickets USING(ticket_no)
+                                                WHERE tickets.flight_no = ${flight_no} AND seat_class = '${seat_class}';`);
+
+            var e_seat_position = e_seat_no_query.rows[0]["?column?"];
+            console.log(e_seat_position)
+
+            if (e_seat_position > 10) {
+                throw ("Economy Seats Full at 10");
+            }
+            var e_seat_no = await client.query(`SELECT CONCAT('E', ${e_seat_position});`)
+            var e_seat_no = e_seat_no.rows[0]["concat"];
+            var seat_no = e_seat_no;
+
+
+            //3.2: get business_seat_no
+        } else if (seat_class == "business") {
+
+            var b_seat_no_query = await client.query(`SELECT COUNT(*)+1
+                                                FROM boarding_passes 
+                                                LEFT JOIN tickets USING(ticket_no)
+                                                WHERE tickets.flight_no = ${flight_no} AND seat_class = '${seat_class}';`);
+
+            var b_seat_position = b_seat_no_query.rows[0]["?column?"];
+            console.log(b_seat_position)
+
+            if (b_seat_position > 10) {
+                throw ("Business Seats Full at 10")
+            }
+            var b_seat_no = await client.query(`SELECT CONCAT('B', ${b_seat_position});`);
+            var b_seat_no = b_seat_no.rows[0]["concat"];
+            var seat_no = b_seat_no;
+
+        }
 
         //4: get boarding_no
+        var boarding_no_query = await client.query(`SELECT COUNT(*)+1 FROM boarding_passes WHERE flight_no = ${flight_no};`);
+        var boarding_no = boarding_no_query.rows[0]["?column?"]
+
 
         //5 & 6: get departing gate_no & baggage_claim
         var gate_no_baggage_claim_query = await client.query(`SELECT departure_gate, baggage_claim FROM flights WHERE flight_no = ${flight_no};`);
-        var gate_no = gate_no_baggage_claim_query.rows[0]["departure_gate"]
-        var baggage_claim = gate_no_baggage_claim_query.rows[0]["baggage_claim"]
+        var gate_no = gate_no_baggage_claim_query.rows[0]["departure_gate"];
+        var baggage_claim = gate_no_baggage_claim_query.rows[0]["baggage_claim"];
+
 
         //7: baggage_id given (skipped)
 
-        // await client.query(`INSERT INTO boarding_passes(ticket_no, flight_no, seat_no, boarding_no, gate_no, baggage_claim, baggage_id)
-        //                     VALUES(${ticket_no}, ${flight_no}, '${seat_no}','${boarding_no}','${gate_no}','${baggage_claim}',${baggage_id})`);
+        await client.query(`INSERT INTO boarding_passes(ticket_no, flight_no, seat_no, boarding_no, gate_no, baggage_claim, baggage_id)
+                            VALUES(${ticket_no}, ${flight_no}, '${seat_no}',${boarding_no},'${gate_no}','${baggage_claim}',${baggage_id})`);
 
         //la fin 
         await client.query("COMMIT;");

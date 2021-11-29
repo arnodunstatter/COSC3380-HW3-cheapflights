@@ -71,9 +71,11 @@ async function main() {
 // var total_amount = discounted_amount*1.0825;
 // await client.query(`UPDATE bookings SET discounted_amount = ${discounted_amount}, taxes = ${taxes}, total_amount=${total_amount} WHERE book_ref= ${i};`);
 
+// businessSeats and economySeats are numbers 
+// seatClass is string 'economy' or 'business' 
 async function makeBooking(client, flight_no, seatClass, economySeats, businessSeats, passport_no, first_name, last_name, email_address, phone_no, DOB, discount_code, card_no) {
     try {
-
+        
         await client.query("BEGIN;"); //start our transaction
 
         //1st: let's check that there's still space on that flight and reserve space if there is space

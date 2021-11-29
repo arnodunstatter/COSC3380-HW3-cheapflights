@@ -16,9 +16,9 @@ async function main() {
             console.log("Problem connecting client");
             throw (e);
         }
-
+// 1, 2 ,3, 4, 5, 6, 7, 8,9, 10, 20
         //react code goes here to grab the booking that user canceled var book_ref = <button></button>
-        var book_ref = 20; //placeholder varabile for user input for book_ref
+        var book_ref = 9; //placeholder varabile for user input for book_ref
         await cancelBooking(client, book_ref);
 
 

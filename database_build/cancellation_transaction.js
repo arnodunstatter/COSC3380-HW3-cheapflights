@@ -2,7 +2,9 @@ main();
 
 async function main() {
     //now we make our client using our creds 
-    const { Client } = require('pg');
+    const {
+        Client
+    } = require('pg');
     const creds = require('./creds.json');
     const client = new Client(creds);
 
@@ -16,7 +18,7 @@ async function main() {
         }
 
         //react code goes here to grab the booking that user canceled var book_ref = <button></button>
-        var book_ref = 15; //placeholder varabile for user input for book_ref
+        var book_ref = 20; //placeholder varabile for user input for book_ref
         await cancelBooking(client, book_ref);
 
 
@@ -59,6 +61,7 @@ async function cancelBooking(client, book_ref) {
         canceled_booking = canceled_booking.rows[0]; //a map with keys: "economy_seats", "business_seats", "flight_no"
         var economy_seats = canceled_booking["economy_seats"];
         var business_seats = canceled_booking["business_seats"];
+        console.log(canceled_booking);
 
         //update available seats on the flight
         if (economy_seats >= 1) {
@@ -66,7 +69,8 @@ async function cancelBooking(client, book_ref) {
                 `UPDATE flights
                 SET available_economy_seats = available_economy_seats + ${economy_seats}
                 WHERE flight_no = ${canceled_booking["flight_no"]};`);
-        } else if (business_seats >= 1) {
+        }
+        if (business_seats >= 1) {
             await client.query(
                 `UPDATE flights
                 SET available_business_seats = available_business_seats + ${business_seats}

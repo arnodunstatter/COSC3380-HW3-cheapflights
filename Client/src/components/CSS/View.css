@@ -1,0 +1,106 @@
+.tickets-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.view-container {
+    display: flex;
+    flex-direction: column;
+    height: 520px;
+    width: 500px;
+    background-color: white;
+    box-shadow: 0 0 10px #d9d9d9;
+    border-radius: 20px;
+    font-size: 1rem;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.view-info {
+    display: flex;
+    flex-direction: row;
+    margin-left: 50px;
+}
+
+/*flight-details*/
+.view-subheader {
+    margin: 20px 0; 
+}
+/*end of section*/
+
+
+/*check in and cancel buttons*/
+.view-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.view-btn {
+    margin-top: 20px;
+    width: 150px;
+    border-style: none;
+    padding: 15px;
+    color: white;
+    background-color: #C60039;
+    border-radius: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.view-btn:hover {
+    background-color: #d61c51;
+    cursor: pointer;
+}
+
+.view-btn-container p:hover{
+    cursor: pointer;
+}
+/*end of section*/
+
+/*paragraph styles*/
+.view-form-h1 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.view-form-h4 {
+    font-size: .8rem;
+    color: #61617A;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.view-form-info {
+    font-size: .8rem;
+    color: #61617A;
+    margin-top: 50px;
+    margin-bottom: 0;
+}
+
+.view-form-info span {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+}
+
+.view-form-h2 {
+    font-size: .9rem;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.view-form-h3 {
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+/*end of section*/

@@ -380,8 +380,8 @@ function Flights() {
                     label="Dense padding"
                 />
             </Box>
-            <Link className="view-btn" to="/checkout">
-                <button className="view-goback-btn">Checkout</button>
+            <Link className="flights-btn-container" to="/checkout">
+                <button className="flights-btn">Checkout</button>
             </Link>
         </div>
     );

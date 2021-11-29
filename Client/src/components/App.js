@@ -20,6 +20,7 @@ function App() {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Router>
         <div className="app-container">
+        <div className='header-dummy'></div>
           <header>
             <Link className='link' to='/'>
               <p className='app-logo'>Cheap<span>Flights</span></p>
@@ -28,7 +29,6 @@ function App() {
 
           <section>
             <Routes>
-
               <Route path='/' element={<Login />} />
               <Route path='/search-flight/flights' element={<Flights />} />
               <Route path='/search-flight' element={<Search />} />

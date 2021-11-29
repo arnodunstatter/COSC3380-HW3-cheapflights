@@ -2,7 +2,9 @@ main();
 
 async function main() {
     //now we make our client using our creds
-    const { Client } = require('pg');
+    const {
+        Client
+    } = require('pg');
     const creds = require('./creds.json');
     const client = new Client(creds);
 
@@ -18,12 +20,12 @@ async function main() {
         //**after user clicks PAY button, complete bookings and generate tickets */
         //creates entries in bookings, tickets, passengers, and passengers_bookings and updates available_seats in flights
         //the following values will be input by user in the web-form
-        var flight_nos = [5219, 5045]; //this will be 'input' by the user by them selecting a viable flight after they specify the whens and wheres
-        var economySeats = 2;
-        var businessSeats = 1; 
+        var flight_nos = [4918]; //this will be 'input' by the user by them selecting a viable flight after they specify the whens and wheres
+        var economySeats = 1;
+        var businessSeats = 9;
         var discount_code = "none";
-        var card_no = "4444555566667777";
-        
+        var card_no = "0987123467409826";
+
         //we will do 3 passengers so passengersInfo.length==3
         // var passengersInfo = [
         //     //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
@@ -34,13 +36,22 @@ async function main() {
 
         var passengersInfo = [
             //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
-            ["549628741","James","Jameson","123james_jameson@hotmail.org","4127898495","1954-01-01","economy"]
+            ["660766997", "Mahatma", "Gandhi", "amimojo@live.com", "5424782483", "1954-12-01", "economy"],
+            ["101504778", "Nelson", "Mandela", "mastinfo@sbcglobal.net", "4745631773", "1955-09-02", "business"],
+            ["468030914", "Winston", "Churchill", "fhirsch@att.net", "0969271842", "1956-08-03", "business"],
+            ["174993265", "Abraham", "Lincoln", "bryanw@aol.com", "2236948455", "1957-07-04", "business"],
+            ["776866417", "Mother", "Teresa", "trieuvan@aol.com", "9018024620", "1958-06-05", "business"],
+            ["925690753", "Napoleon", "Bonaparte", "kodeman@me.com", "5444224219", "1959-05-06", "business"],
+            ["955143661", "George", "Washington", "bsikdar@yahoo.com", "2329523709", "1960-04-07", "business"],
+            ["974206547", "Dalai", "Lama", "rnelson@icloud.com", "6798690113", "1961-03-08", "business"],
+            ["114045946", "Julias", "Caesar", "raides@mac.com", "5134170963", "1972-02-09", "business"],
+            ["580387934", "Franklin", "Roosevelt", "priv1can@live.com", "8512473401", "1983-01-11", "business"]
         ];
-        
+
         //makeBooking(client, flight_nos, economySeats, businessSeats, discount_code, card_no, passengersInfo) 
         //flight_nos is an array containing 1 or more flight_no (>1 for bookings with connecting flights)
         //passengersInfo is an array of arrays where each internal array has [passport_no, first_name, last_name, email_address, phone_no, DOB, seatClass]
-        await makeBooking(client, flight_nos, economySeats, businessSeats, discount_code, card_no, passengersInfo); 
+        await makeBooking(client, flight_nos, economySeats, businessSeats, discount_code, card_no, passengersInfo);
 
         throw ("Ending Correctly");
     } catch (e) {
@@ -77,16 +88,15 @@ async function main() {
 // var total_amount = discounted_amount*1.0825;
 // await client.query(`UPDATE bookings SET discounted_amount = ${discounted_amount}, taxes = ${taxes}, total_amount=${total_amount} WHERE book_ref= ${i};`);
 
-async function makeBooking(client, flight_nos, economySeats, businessSeats, discount_code, card_no, passengersInfo) 
+async function makeBooking(client, flight_nos, economySeats, businessSeats, discount_code, card_no, passengersInfo)
 //flight_nos is an array containing 1 or more flight_no (>1 for bookings with connecting flights)
 //passengersInfo is an array of arrays where each internal array has [passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
 {
     try {
-        
+
         await client.query("BEGIN;"); //start our transaction
         //for each flight_no in flight_nos
-        for(let i = 0; i < flight_nos.length; ++i)
-        {
+        for (let i = 0; i < flight_nos.length; ++i) {
             let flight_no = flight_nos[i];
             //1st: let's check that there's still space on that flight and reserve space if there is space
             var available_seats = await client.query(
@@ -99,19 +109,19 @@ async function makeBooking(client, flight_nos, economySeats, businessSeats, disc
                 throw ("Not enough available seats"); //the catch will issue the ROLLBACK command to the database
             }
             //now reserve space on that flight by appropriately decrementing the availabe_seats
-            if(economySeats > 0)
+            if (economySeats > 0)
                 await client.query(
                     `UPDATE flights
                         SET available_economy_seats = available_economy_seats - ${economySeats}
                         WHERE flight_no = ${flight_no};`
                 );
-            if(businessSeats > 0)
+            if (businessSeats > 0)
                 await client.query(
                     `UPDATE flights
                         SET available_business_seats = available_business_seats - ${businessSeats}
                         WHERE flight_no = ${flight_no};`
                 );
-            
+
         }
 
         //2nd: let's add the booking to bookings
@@ -153,9 +163,8 @@ async function makeBooking(client, flight_nos, economySeats, businessSeats, disc
                     total_amount=${total_amount}
                 WHERE book_ref = ${book_ref};`
         );
-        
-        for(let i = 0; i < passengersInfo.length; ++i)
-        {
+
+        for (let i = 0; i < passengersInfo.length; ++i) {
             //passengersInfo is an array of arrays where each internal array has [passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
             var passport_no = passengersInfo[i][0];
             var first_name = passengersInfo[i][1];
@@ -182,8 +191,7 @@ async function makeBooking(client, flight_nos, economySeats, businessSeats, disc
 
             //5th: let's do tickets
             //INSERT INTO SELECT coupled with given values: https://stackoverflow.com/questions/25969/insert-into-values-select-from
-            for(let i = 0; i < flight_nos.length; ++i)
-            {
+            for (let i = 0; i < flight_nos.length; ++i) {
                 let flight_no = flight_nos[i];
                 await client.query(
                     `INSERT INTO tickets (depart_time, seat_class, book_ref, passport_no, flight_no)
@@ -201,5 +209,3 @@ async function makeBooking(client, flight_nos, economySeats, businessSeats, disc
         throw (e); //will bypass the "Ending Correctly" throw
     }
 }
-
-

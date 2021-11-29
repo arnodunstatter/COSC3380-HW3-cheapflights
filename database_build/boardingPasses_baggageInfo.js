@@ -2,7 +2,9 @@ main();
 
 async function main() {
     //now we make our client using our creds
-    const { Client } = require('pg');
+    const {
+        Client
+    } = require('pg');
     const creds = require('./creds.json');
     const client = new Client(creds);
 

@@ -46,11 +46,23 @@ async function makeBoardingPasses(client, ticket_no, baggage_id) {
         var flight_no_query = await client.query(`SELECT flight_no FROM tickets WHERE ticket_no = ${ticket_no};`);
         var flight_no = flight_no_query.rows[0]["flight_no"];
 
-        //3: get seat_no
-        var seat_no_query = await client.query(`SELECT COUNT(seat_class)+1 AS count
+        //3.1: get economy_seat_no
+        var e_seat_no_query = await client.query(`SELECT COUNT(seat_class)+1 AS count
                                                 FROM tickets 
-                                                WHERE flight_no = ${flight_no} AND seat_class LIKE 'e%';`)
+                                                WHERE flight_no = ${flight_no} AND seat_class LIKE 'e%';`);
+        var e_seat_position = e_seat_no_query.rows[0]["count"];
+        var e_seat_no = await client.query(`SELECT CONCAT('E', ${e_seat_position});`)
+        var e_seat_no = e_seat_no.rows[0]["concat"];
+        console.log(e_seat_no);
 
+        //3.2: get business_seat_no
+        var b_seat_no_query = await client.query(`SELECT COUNT(seat_class)+1 AS count
+                                                FROM tickets 
+                                                WHERE flight_no = ${flight_no} AND seat_class LIKE 'b%';`);
+        var b_seat_position = b_seat_no_query.rows[0]["count"];
+        var b_seat_no = await client.query(`SELECT CONCAT('B', ${b_seat_position});`)
+        var b_seat_no = b_seat_no.rows[0]["concat"];
+        console.log(b_seat_no);
 
         //4: get boarding_no
 
@@ -61,8 +73,8 @@ async function makeBoardingPasses(client, ticket_no, baggage_id) {
 
         //7: baggage_id given (skipped)
 
-        await client.query(`INSERT INTO boarding_passes(ticket_no, flight_no, seat_no, boarding_no, gate_no, baggage_claim, baggage_id)
-                            VALUES(${ticket_no}, ${flight_no}, '${seat_no}','${boarding_no}','${gate_no}','${baggage_claim}',${baggage_id})`);
+        // await client.query(`INSERT INTO boarding_passes(ticket_no, flight_no, seat_no, boarding_no, gate_no, baggage_claim, baggage_id)
+        //                     VALUES(${ticket_no}, ${flight_no}, '${seat_no}','${boarding_no}','${gate_no}','${baggage_claim}',${baggage_id})`);
 
         //la fin 
         await client.query("COMMIT;");
@@ -95,14 +107,14 @@ async function makeBaggageInfo(client, number_of_bags) {
 }
 
 //already inserted ticket_no, flight_no, gate_no, baggage_claim, baggage_id
-`SELECT COUNT(*)
-    FROM BOARDING PASSES
-    WHERE flight_no = ${flight_no} AND
-        SEAT_NO ILIKE '${first_letter_of_seatClass}%';` + 1
-`SELECT COUNT(*)
-    FROM boarding_passes
-    WHERE flight_no = ${flight_no};` = boarding_no
+// `SELECT COUNT(*)
+//     FROM BOARDING PASSES
+//     WHERE flight_no = ${flight_no} AND
+//         SEAT_NO ILIKE '${first_letter_of_seatClass}%';` + 1
+// `SELECT COUNT(*)
+//     FROM boarding_passes
+//     WHERE flight_no = ${flight_no};` = boarding_no
 
-    SELECT COUNT(seat_class)+'E' +1 AS count
-    FROM tickets 
-    WHERE flight_no = 4920 AND seat_class LIKE 'e%';
+//     SELECT COUNT(seat_class)+'E' +1 AS count
+//     FROM tickets 
+//     WHERE flight_no = 4920 AND seat_class LIKE 'e%';

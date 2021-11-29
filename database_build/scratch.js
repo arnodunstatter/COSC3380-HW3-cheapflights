@@ -2,9 +2,7 @@ main();
 
 async function main() {
     //now we make our client using our creds
-    const {
-        Client
-    } = require('pg');
+    const { Client } = require('pg');
     const creds = require('./creds.json');
     const client = new Client(creds);
 
@@ -16,25 +14,16 @@ async function main() {
             console.log("Problem connecting client");
             throw (e);
         }
-        
-        // var directFlights = await client.query(
-        //     `SELECT *
-        //         FROM flights
-        //         WHERE departure_airport_code = '${departureAirportCode}' AND 
-        //             arrival_airport_code = '${arrivalAirportCode}' AND 
-        //             DATE(departure_time) = '${departure_date}';`
-        
-        var flights = await client.query(
-            `SELECT * FROM flights LIMIT 10;`
-        );
-        flights=flights.rows;
-        console.log("Array of maps:");
-        console.log(flights);
-        for(let i = 0; i < flights.length;++i)
-            flights[i] = Object.values(flights[i])
-            console.log(Object.values(flights[i]))
-        console.log("Array of arrays?");
-        console.log(flights);
+
+        var result = await client.query("SELECT first_name FROM passengers WHERE first_name = 'Arno';");
+        if (result.rows[0] == undefined)
+            console.log("yup");
+        else
+        {
+            var first_name = result.rows[0]["first_name"];
+            console.log(first_name);
+        }
+
 
         throw ("Ending Correctly");
     } catch (e) {

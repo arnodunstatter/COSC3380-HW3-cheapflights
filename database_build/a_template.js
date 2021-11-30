@@ -2,7 +2,9 @@ main();
 
 async function main() {
     //now we make our client using our creds
-    const { Client } = require('pg');
+    const {
+        Client
+    } = require('pg');
     const creds = require('./creds.json');
     const client = new Client(creds);
 
@@ -29,3 +31,11 @@ async function main() {
     }
 
 }
+
+// fs.appendFileSync("transaction.sql", " ", function (err) {
+//     console.log(err);
+//   });
+
+//   fs.appendFileSync("query.sql", " ", function (err) {
+//     console.log(err);
+//   });

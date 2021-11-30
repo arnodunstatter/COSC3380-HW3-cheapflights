@@ -44,34 +44,47 @@ async function makeBoardingPasses(client, ticket_no, baggage_id) {
     try {
 
         await client.query("BEGIN;"); //start our transaction
-
+        fs.appendFileSync("transaction.sql", "//Begin transaction for populating boarding_passes table//\r\rBEGIN;\r\r", function (err) {
+            console.log(err);
+        });
         //1: ticket_no given (skipped)
 
         //2: get flight_no from flights table
-        var flight_no_query = await client.query(`SELECT flight_no FROM tickets WHERE ticket_no = ${ticket_no};`);
+        var flight_no_query = await client.query(`SELECT flight_no\rFROM tickets\rWHERE ticket_no = ${ticket_no};\r\r`);
+        fs.appendFileSync("transaction.sql", "//Get flight_no//\r\r" + flight_no_query, function (err) {
+            console.log(err);
+        });
         var flight_no = flight_no_query.rows[0]["flight_no"];
 
 
         //3: get seat_no by first determining seat_class
-        var seat_class_query = await client.query(`SELECT seat_class FROM tickets WHERE ticket_no = ${ticket_no};`);
+        var seat_class_query = await client.query(`SELECT seat_class\rFROM tickets\rWHERE ticket_no = ${ticket_no};\r\r`);
+        fs.appendFileSync("transaction.sql", "//Get seat_class//\r\r" + seat_class_query, function (err) {
+            console.log(err);
+        });
         var seat_class = seat_class_query.rows[0]["seat_class"];
 
 
         //3.1: get economy_seat_no
         if (seat_class == "economy") {
 
-            var e_seat_no_query = await client.query(`SELECT COUNT(*)+1
-                                                FROM boarding_passes 
-                                                LEFT JOIN tickets USING(ticket_no)
-                                                WHERE tickets.flight_no = ${flight_no} AND seat_class = '${seat_class}';`);
-
+            var e_seat_no_query = await client.query(`SELECT COUNT(*)+1\r
+                                                FROM boarding_passes\r
+                                                LEFT JOIN tickets USING(ticket_no)\r
+                                                WHERE tickets.flight_no = ${flight_no}\rAND seat_class = '${seat_class}'\r\r;`);
+            fs.appendFileSync("transaction.sql", "//Get economy_seat_no//\r\r" + e_seat_no_query, function (err) {
+                console.log(err);
+            });
             var e_seat_position = e_seat_no_query.rows[0]["?column?"];
             console.log(e_seat_position)
 
             if (e_seat_position > 10) {
                 throw ("Economy Seats Full at 10");
             }
-            var e_seat_no = await client.query(`SELECT CONCAT('E', ${e_seat_position});`)
+            var e_seat_no = await client.query(`SELECT CONCAT('E', ${e_seat_position});\r\r`)
+            fs.appendFileSync("transaction.sql", "//Concat economy_seat_no with class_letter//\r\r" + e_seat_no, function (err) {
+                console.log(err);
+            });
             var e_seat_no = e_seat_no.rows[0]["concat"];
             var seat_no = e_seat_no;
 
@@ -79,30 +92,41 @@ async function makeBoardingPasses(client, ticket_no, baggage_id) {
             //3.2: get business_seat_no
         } else if (seat_class == "business") {
 
-            var b_seat_no_query = await client.query(`SELECT COUNT(*)+1
-                                                FROM boarding_passes 
-                                                LEFT JOIN tickets USING(ticket_no)
-                                                WHERE tickets.flight_no = ${flight_no} AND seat_class = '${seat_class}';`);
-
+            var b_seat_no_query = await client.query(`SELECT COUNT(*)+1\r
+                                                FROM boarding_passes\r
+                                                LEFT JOIN tickets USING(ticket_no)\r
+                                                WHERE tickets.flight_no = ${flight_no}\rAND seat_class = '${seat_class}';\r\r`);
+            fs.appendFileSync("transaction.sql", "//Get business_seat_no//\r\r" + b_seat_no_query, function (err) {
+                console.log(err);
+            });
             var b_seat_position = b_seat_no_query.rows[0]["?column?"];
             console.log(b_seat_position)
 
             if (b_seat_position > 10) {
                 throw ("Business Seats Full at 10")
             }
-            var b_seat_no = await client.query(`SELECT CONCAT('B', ${b_seat_position});`);
+            var b_seat_no = await client.query(`SELECT CONCAT('B', ${b_seat_position});\r\r`);
+            fs.appendFileSync("transaction.sql", "//Concat business_seat_no with class_letter//\r\r" + b_seat_no, function (err) {
+                console.log(err);
+            });
             var b_seat_no = b_seat_no.rows[0]["concat"];
             var seat_no = b_seat_no;
 
         }
 
         //4: get boarding_no
-        var boarding_no_query = await client.query(`SELECT COUNT(*)+1 FROM boarding_passes WHERE flight_no = ${flight_no};`);
+        var boarding_no_query = await client.query(`SELECT COUNT(*)+1\rFROM boarding_passes\rWHERE flight_no = ${flight_no};\r\r`);
+        fs.appendFileSync("transaction.sql", "//Get boarding_no//\r\r" + boarding_no_query, function (err) {
+            console.log(err);
+        });
         var boarding_no = boarding_no_query.rows[0]["?column?"]
 
 
         //5 & 6: get departing gate_no & baggage_claim
-        var gate_no_baggage_claim_query = await client.query(`SELECT departure_gate, baggage_claim FROM flights WHERE flight_no = ${flight_no};`);
+        var gate_no_baggage_claim_query = await client.query(`SELECT departure_gate, baggage_claim\rFROM flights\rWHERE flight_no = ${flight_no};\r\r`);
+        fs.appendFileSync("transaction.sql", "//Get departing_gate & baggage_claim//\r\r" + gate_no_baggage_claim_query, function (err) {
+            console.log(err);
+        });
         var gate_no = gate_no_baggage_claim_query.rows[0]["departure_gate"];
         var baggage_claim = gate_no_baggage_claim_query.rows[0]["baggage_claim"];
 
@@ -111,11 +135,19 @@ async function makeBoardingPasses(client, ticket_no, baggage_id) {
 
         await client.query(`INSERT INTO boarding_passes(ticket_no, flight_no, seat_no, boarding_no, gate_no, baggage_claim, baggage_id)
                             VALUES(${ticket_no}, ${flight_no}, '${seat_no}',${boarding_no},'${gate_no}','${baggage_claim}',${baggage_id})`);
-
+        fs.appendFileSync("transaction.sql", "//Insert into boarding_passes//\r\rINSERT INTO boarding_passes(ticket_no, flight_no, seat_no, boarding_no, gate_no, baggage_claim, baggage_id)\rVALUES(${ticket_no}, ${flight_no}, '${seat_no}',${boarding_no},'${gate_no}','${baggage_claim}',${baggage_id})\r\r", function (err) {
+            console.log(err);
+        });
         //la fin 
         await client.query("COMMIT;");
+        fs.appendFileSync("transaction.sql", "COMMIT;\r\r", function (err) {
+            console.log(err);
+        });
     } catch (e) {
         await client.query("ROLLBACK;");
+        fs.appendFileSync("transaction.sql", "ROLLBACK;\r\r", function (err) {
+            console.log(err);
+        });
         throw (e); //will bypass the "Ending Correctly" throw
     }
 }
@@ -125,18 +157,30 @@ async function makeBoardingPasses(client, ticket_no, baggage_id) {
 async function makeBaggageInfo(client, number_of_bags) {
     try {
 
-        await client.query("BEGIN;"); //start our transaction
+        await client.query("BEGIN;\r\r"); //start our transaction
+        fs.appendFileSync("transaction.sql", "//Begin transaction for populating baggage_info table//\r\rBEGIN;\r\r", function (err) {
+            console.log(err);
+        });
+        await client.query(`INSERT INTO baggage_info(number_of_bags)\r\rVALUES(${number_of_bags});\r\r`);
+        fs.appendFileSync("transaction.sql", "//Insert into baggage_info number of bags user inputs//;\r\r", function (err) {
+            console.log(err);
+        });
 
-        await client.query(`INSERT INTO baggage_info(number_of_bags) VALUES(${number_of_bags})`);
-
-
-        var baggage_id = await client.query(`SELECT baggage_id from baggage_info ORDER BY baggage_id DESC LIMIT 1;`); //get baggage_id
-
-        await client.query("COMMIT;");
+        var baggage_id = await client.query(`SELECT baggage_id\rFROM baggage_info\rORDER BY baggage_id DESC LIMIT 1;\r\r`); //get baggage_id
+        fs.appendFileSync("transaction.sql", "//Select baggage_id from baggage_info//;\r\r", function (err) {
+            console.log(err);
+        });
+        await client.query("COMMIT;\r\r");
+        fs.appendFileSync("transaction.sql", "COMMIT;\r\r", function (err) {
+            console.log(err);
+        });
         return Object.values(baggage_id.rows[0]); //return newest baggage_id
 
     } catch (e) {
-        await client.query("ROLLBACK;");
+        await client.query("ROLLBACK;\r\r");
+        fs.appendFileSync("transaction.sql", "ROLLBACK;\r\r", function (err) {
+            console.log(err);
+        });
         throw (e); //will bypass the "Ending Correctly" throw
     }
 
@@ -154,3 +198,5 @@ async function makeBaggageInfo(client, number_of_bags) {
 //     SELECT COUNT(seat_class)+'E' +1 AS count
 //     FROM tickets 
 //     WHERE flight_no = 4920 AND seat_class LIKE 'e%';
+
+"VALUES(${ticket_no}, ${flight_no}, '${seat_no}',${boarding_no},'${gate_no}','${baggage_claim}',${baggage_id})"

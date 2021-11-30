@@ -1,14 +1,20 @@
-.tickets-container {
+.checkin-waitlist-row {
     display: flex;
-    justify-content: center;
-    flex-direction: column;
+    justify-content: space-between;
+    flex-direction: row;
     animation: fade 0.2s ease;
 }
 
-.view-container {
+.checkin-waitlist-column {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.checkin-container {
     display: flex;
     flex-direction: column;
-    height: auto;
+    height: 500px;
     width: 500px;
     background-color: white;
     box-shadow: 0 0 10px #d9d9d9;
@@ -45,20 +51,6 @@
 /*flight-details*/
 .view-subheader {
     margin: 20px 0; 
-}
-
-.view-row {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-}
-
-.view-form-h4-bold{
-    margin-top: 10px;
-    font-size: .8rem;
-    color: #61617A;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
 }
 /*end of section*/
 
@@ -157,6 +149,15 @@
 /*end of section*/
 
 /*paragraph styles*/
+.checkin-form-h1 {
+    display: flex;
+    align-self: center;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    margin: 0 0 30px 0;
+}
+
 .view-form-h1 {
     font-family: 'Roboto', sans-serif;
     font-weight: 900;

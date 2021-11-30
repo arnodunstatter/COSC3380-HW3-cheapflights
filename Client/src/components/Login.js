@@ -15,7 +15,7 @@ function Login() {
 
         try {
             const body = { value };
-            const response = await fetch("http://localhost:5000/view-flight", {
+            const response = await fetch("http://localhost:5000/get-email", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
@@ -27,7 +27,6 @@ function Login() {
         }
     }
     //////////////////////////////////End of Section////////////////////////////////////////////
-
 
     return (
         <div className='login-container'>

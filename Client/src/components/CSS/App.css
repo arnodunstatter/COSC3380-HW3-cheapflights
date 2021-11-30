@@ -44,9 +44,18 @@
 .app-container section {
   display: flex;
   justify-content: center;
-  min-height: 100vh;
 }
 
 .link {
   text-decoration: none;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

@@ -5,6 +5,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Flights from './Flights';
 import Checkout from './Checkout';
+import Checkin from './Checkin';
 
 import './CSS/App.css';
 
@@ -34,6 +35,7 @@ function App() {
               <Route path='/search-flight' element={<Search />} />
               <Route path='/view-flight' element={<View />} />
               <Route path ='/checkout' element={<Checkout />} />
+              <Route path ='/checkin' element={<Checkin />} />
             </Routes>
           </section>
         </div>

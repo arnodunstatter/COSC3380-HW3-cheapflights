@@ -4,7 +4,7 @@
 
 //departure times auto generated
 //SELECT * FROM generate_series('2021-12-01 00:00:00'::timestamptz,'2021-12-07 23:59:59', '1 hours') as departure;
-
+var fs = require("fs");
 main();
 
 async function main() {

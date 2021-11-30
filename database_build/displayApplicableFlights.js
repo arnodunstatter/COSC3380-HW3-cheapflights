@@ -1,3 +1,4 @@
+var fs = require("fs");
 main();
 
 async function main() {

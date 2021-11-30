@@ -1,4 +1,6 @@
+var fs = require("fs");
 main();
+
 
 async function main() {
     //now we make our client using our creds 
@@ -18,7 +20,7 @@ async function main() {
         }
         // 1, 2 ,3, 4, 5, 6, 7, 8,9, 10, 20
         //react code goes here to grab the booking that user canceled var book_ref = <button></button>
-        var book_ref = 9; //placeholder varabile for user input for book_ref
+        var book_ref = 18; //placeholder varabile for user input for book_ref
         await cancelBooking(client, book_ref);
 
 
@@ -104,3 +106,13 @@ async function cancelBooking(client, book_ref) {
         throw (e); //will bypass the "Ending Correctly" throw
     }
 }
+
+// 4918 0 0
+// 5219 8 9
+// 5045 8 9
+
+// update bookings set canceled = 'f';
+// update flights set available_economy_seats = 8 where flight_no = 5219;
+// update flights set available_business_seats = 9 where flight_no = 5219;
+// update flights set available_business_seats = 0 where flight_no = 4918;
+// update flights set available_economy_seats = 0 where flight_no = 4918;

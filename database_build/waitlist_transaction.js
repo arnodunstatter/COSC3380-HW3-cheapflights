@@ -1,3 +1,4 @@
+var fs = require("fs");
 main();
 
 async function main() {
@@ -290,3 +291,9 @@ async function attemptToChangeSeatClass(client, ticket_no) {
         throw (e);
     }
 }
+
+var economy_waitlist_query = await client.query("select * from economy_waitlist;");
+var economy_waitlist = economy_waitlist_query.rows
+
+var business_waitlist_query = await client.query("select * from business_waitlist;");
+var business_waitlist = business_waitlist_query.rows

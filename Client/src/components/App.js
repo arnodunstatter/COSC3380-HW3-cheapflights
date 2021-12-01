@@ -3,7 +3,7 @@ import View from './View';
 import Login from './Login';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import Flights from './Flights';
+import ViewFlights from './ViewFlights';
 import Checkout from './Checkout';
 import Checkin from './Checkin';
 
@@ -31,7 +31,7 @@ function App() {
           <section>
             <Routes>
               <Route path='/' element={<Login />} />
-              <Route path='/search-flight/flights' element={<Flights />} />
+              <Route path='/search-flight/flights' element={<ViewFlights />} />
               <Route path='/search-flight' element={<Search />} />
               <Route path='/view-flight' element={<View />} />
               <Route path ='/checkout' element={<Checkout />} />

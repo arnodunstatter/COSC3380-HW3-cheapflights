@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./CSS/Search.css";
 import DatePicker from "@mui/lab/DatePicker";
 import TextField from "@mui/material/TextField";
@@ -6,18 +6,25 @@ import Autocomplete from "@mui/material/Autocomplete";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FlightLand, FlightTakeoff, Send } from "@mui/icons-material";
-import { Navigate } from "react-router-dom";
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { useNavigate } from "react-router-dom";
+
 
 function Search() {
-    ///////////////////////////////////////Config///////////////////////////////////////////////////
     const today = new Date();
     const [departureDate, setDepartureDate] = useState(today);
     const [arrivalDate, setArrivalDate] = useState(departureDate);
+    const [departureCity, setDepartureCity] = useState("Houston");
+    const [arrivalCity, setArrivalCity] = useState("Seattle");
+    const [seatClass, setSeatClass] = useState('economy')
     const [loading, setLoading] = useState(false);
     const [style, setStyle] = useState("active");
     const [bookingType, setBookingType] = useState("round");
     const [numPassenger, setNumPassenger] = useState(1);
-    const [redirect, setRedirect] = useState(false);
+    const navigate = useNavigate();
+
+    const [cityList, setCityList] = useState(["Houston", "Dallas", "Russia", "Seattle"]);
 
     const checkArrivalDate = (newDate) => {
         if (newDate < departureDate) {
@@ -44,12 +51,57 @@ function Search() {
         },
     });
 
-    const search = () => {
+    // fetch the city list
+    /*
+    useEffect(() => {
+        /*
+        try {
+            const body = { departureDate, departureCity, arrivalCity, numPassenger, seatClass };
+            const response = await fetch("http://localhost:5000/search-flight/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            console.log(await response.json());
+            //state: await response.json();
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }, [])
+*/
+
+
+    const search = async() => {
         setLoading(true);
-        // submit form
-        setRedirect(true);
+
+        let departure_date = departureDate.getFullYear() + '-' + (departureDate.getMonth() + 1) + '-' + departureDate.getDate();
+        let arrival_date = arrivalDate.getFullYear() + '-' + (arrivalDate.getMonth() + 1) + '-' + arrivalDate.getDate();
+
+        try {
+            const body = { departure_date, departureCity, arrivalCity, numPassenger, seatClass };
+            console.log(body); 
+            const response = await fetch("http://localhost:5000/search-flight/flights", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            if (bookingType == 'round') {
+                const body2 = { departure_date: arrival_date, departureCity: arrivalCity, arrivalCity: departureCity, numPassenger, seatClass };
+                console.log(body2);
+                const response2 = await fetch("http://localhost:5000/search-flight/flights", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body2)
+                });
+                navigate("/search-flight/flights", { state: [bookingType, await response.json(), await response2.json() ] });
+            } else {
+                navigate("/search-flight/flights", { state: [bookingType, await response.json()] });
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
-    //////////////////////////////////////////queries//////////////////////////////////////////////////////
 
     return (
         <div className="search-container">
@@ -75,72 +127,94 @@ function Search() {
             </div>
 
             <div className="search-form">
-                <div className="inputs">
-                    <Autocomplete
-                        disblePortal
-                        options={["Houston", "Dallas", "Russia"]}
-                        sx={{ width: 300 }}
-                        freeSolo
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label={<FlightTakeoff />}
-                                helperText="Departing Location"
-                            />
-                        )}
-                    />
-                </div>
-                <div className="inputs">
-                    <Autocomplete
-                        disablePortal
-                        options={["Houston", "Dallas", "Russia"]}
-                        sx={{ width: 300 }}
-                        freeSolo
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label={<FlightLand />}
-                                helperText="Destination"
-                            />
-                        )}
-                    />
-                </div>
+                
+                    <div className="inputs">
+                        <Autocomplete
+                            value={departureCity}
+                            onChange={(event, newValue) => {
+                                setDepartureCity(newValue);
+                            }}
+                            disblePortal
+                            options={cityList}
+                            sx={{ width: 300 }}
+                            freeSolo
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label={<FlightTakeoff />}
+                                    helperText="Departing Location"
+                                />
+                            )}
+                        />
+                    </div>
+                    <div className="inputs">
+                        <Autocomplete
+                            value={arrivalCity}
+                            onChange={(event, newValue) => {
+                                setArrivalCity(newValue);
+                            }}
+                            disablePortal
+                            options={cityList}
+                            sx={{ width: 300 }}
+                            freeSolo
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label={<FlightLand />}
+                                    helperText="Destination"
+                                />
+                            )}
+                        />
+                    </div>
 
-                <div className="inputs">
-                    <DatePicker
-                        label="Departure Date"
-                        value={departureDate}
-                        disablePast
-                        onChange={(newDate) => {
-                            bookingType === "round"
-                                ? checkDepartureDate(newDate)
-                                : setDepartureDate(newDate);
-                        }}
-                        renderInput={(params) => <TextField {...params} helperText=" " />}
-                    />
-                </div>
-                {bookingType === "round" && (
                     <div className="inputs">
                         <DatePicker
-                            label="Arrival Date"
-                            value={arrivalDate}
+                            label="Departure Date"
+                            value={departureDate}
                             disablePast
                             onChange={(newDate) => {
-                                checkArrivalDate(newDate);
+                                bookingType === "round"
+                                    ? checkDepartureDate(newDate)
+                                    : setDepartureDate(newDate);
                             }}
                             renderInput={(params) => <TextField {...params} helperText=" " />}
                         />
                     </div>
+                    {bookingType === "round" && (
+                        <div className="inputs">
+                            <DatePicker
+                                label="Return Date"
+                                value={arrivalDate}
+                                disablePast
+                                onChange={(newDate) => {
+                                    checkArrivalDate(newDate);
+                                }}
+                                renderInput={(params) => <TextField {...params} helperText=" " />}
+                            />
+                        </div>
                 )}
-                <TextField
-                    id="outlined-number"
-                    label="Passengers"
-                    type="number"
-                    defaultValue={numPassenger}
-                    onChange={setNumPassenger}
-                    InputProps={{ pattern: "[0-9]*", inputProps: { min: 1, max: 138 } }}
-                />
+                <div className="inputs">
+                    <TextField
+                        id="outlined-number"
+                        label="Passengers"
+                        type="number"
+                        defaultValue={numPassenger}
+                        onChange={(event) => setNumPassenger(event.target.value)}
+                        InputProps={{ pattern: "[0-9]*", inputProps: { min: 1, max: 138 } }}
+                    />
+                  
+                    <Select
+                        defaultValue={seatClass}
+                        label="Class Preference"
+                        onChange={(event) => {setSeatClass(event.target.value)}}
+                        autoWidth={true}
+                    >
+                        <MenuItem value={'business'}>Business</MenuItem>
+                        <MenuItem value={'economy'}>Economy</MenuItem>
+                    </Select>
+                </div>
             </div>
+
 
             <ThemeProvider theme={submitTheme}>
                 <LoadingButton
@@ -154,7 +228,6 @@ function Search() {
                 >
                     Search
                 </LoadingButton>
-                {redirect ? <Navigate push to="/search-flight/flights" /> : null}
             </ThemeProvider>
         </div>
     );

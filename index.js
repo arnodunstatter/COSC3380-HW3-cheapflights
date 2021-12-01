@@ -9,6 +9,7 @@ require('./routes/getEmail.js')(app);
 require('./routes/cancelTicket.js')(app);
 require('./routes/checkIn.js')(app);
 require('./routes/getWaitlist')(app);
+require('./routes/searchDisplay')(app);
 
 app.listen(5000, () => {
     console.log("Server has started on port 5000");

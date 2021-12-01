@@ -21,7 +21,7 @@ async function main() {
         //**user clicks check-in button, prompt user for number of bags, and then generate boarding passes after they input # of bags*/
 
         var number_of_bags = 2;
-        var ticket_no = 1;
+        var ticket_no = 45;
 
         var baggage_id = await makeBaggageInfo(client, number_of_bags); //user enters number_of_bags, only 0, 1, 2 number of bags allowed
         await makeBoardingPasses(client, ticket_no, baggage_id); //user checks-in, generate boarding passes

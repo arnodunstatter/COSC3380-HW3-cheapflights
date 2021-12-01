@@ -21,33 +21,33 @@ async function main() {
         //**after user clicks PAY button, complete bookings and generate tickets */
         //creates entries in bookings, tickets, passengers, and passengers_bookings and updates available_seats in flights
         //the following values will be input by user in the web-form
-        var flight_nos = [4918]; //this will be 'input' by the user by them selecting a viable flight after they specify the whens and wheres
-        var economySeats = 1;
-        var businessSeats = 9;
+        var flight_nos = [4997, 5266]; //this will be 'input' by the user by them selecting a viable flight after they specify the whens and wheres
+        var economySeats = 2;
+        var businessSeats = 1;
         var discount_code = "none";
         var card_no = "0987123467409826";
 
-        //we will do 3 passengers so passengersInfo.length==3
-        // var passengersInfo = [
-        //     //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
-        //     ["549628741","James","Jameson","james_jameson@hotmail.org","5127898495","1950-01-01","economy"],
-        //     ["987456321", "Bill", "Billson","bill_billson@hotmail.org","5128447733","1951-02-02","economy"],
-        //     ["159753852","Kevin","Kevinson","kevin_kevinson@hotmail.org","512812999","1953-03-03","business"] 
-        // ];
-
+        // we will do 3 passengers so passengersInfo.length==3
         var passengersInfo = [
             //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
-            ["660766997", "Mahatma", "Gandhi", "amimojo@live.com", "5424782483", "1954-12-01", "economy"],
-            ["101504778", "Nelson", "Mandela", "mastinfo@sbcglobal.net", "4745631773", "1955-09-02", "business"],
-            ["468030914", "Winston", "Churchill", "fhirsch@att.net", "0969271842", "1956-08-03", "business"],
-            ["174993265", "Abraham", "Lincoln", "bryanw@aol.com", "2236948455", "1957-07-04", "business"],
-            ["776866417", "Mother", "Teresa", "trieuvan@aol.com", "9018024620", "1958-06-05", "business"],
-            ["925690753", "Napoleon", "Bonaparte", "kodeman@me.com", "5444224219", "1959-05-06", "business"],
-            ["955143661", "George", "Washington", "bsikdar@yahoo.com", "2329523709", "1960-04-07", "business"],
-            ["974206547", "Dalai", "Lama", "rnelson@icloud.com", "6798690113", "1961-03-08", "business"],
-            ["114045946", "Julias", "Caesar", "raides@mac.com", "5134170963", "1972-02-09", "business"],
-            ["580387934", "Franklin", "Roosevelt", "priv1can@live.com", "8512473401", "1983-01-11", "business"]
+            ["549628741", "James", "Jameson", "james_jameson@hotmail.org", "5127898495", "1950-01-01", "economy"],
+            ["987456321", "Bill", "Billson", "bill_billson@hotmail.org", "5128447733", "1951-02-02", "economy"],
+            ["159753852", "Kevin", "Kevinson", "kevin_kevinson@hotmail.org", "512812999", "1953-03-03", "business"]
         ];
+
+        // var passengersInfo = [
+        //     //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
+        //     ["660766997", "Mahatma", "Gandhi", "amimojo@live.com", "5424782483", "1954-12-01", "economy"],
+        //     ["101504778", "Nelson", "Mandela", "mastinfo@sbcglobal.net", "4745631773", "1955-09-02", "business"],
+        //     ["468030914", "Winston", "Churchill", "fhirsch@att.net", "0969271842", "1956-08-03", "business"],
+        //     ["174993265", "Abraham", "Lincoln", "bryanw@aol.com", "2236948455", "1957-07-04", "business"],
+        //     ["776866417", "Mother", "Teresa", "trieuvan@aol.com", "9018024620", "1958-06-05", "business"],
+        //     ["925690753", "Napoleon", "Bonaparte", "kodeman@me.com", "5444224219", "1959-05-06", "business"],
+        //     ["955143661", "George", "Washington", "bsikdar@yahoo.com", "2329523709", "1960-04-07", "business"],
+        //     ["974206547", "Dalai", "Lama", "rnelson@icloud.com", "6798690113", "1961-03-08", "business"],
+        //     ["114045946", "Julias", "Caesar", "raides@mac.com", "5134170963", "1972-02-09", "business"],
+        //     ["580387934", "Franklin", "Roosevelt", "priv1can@live.com", "8512473401", "1983-01-11", "business"]
+        // ];
 
         //makeBooking(client, flight_nos, economySeats, businessSeats, discount_code, card_no, passengersInfo) 
         //flight_nos is an array containing 1 or more flight_no (>1 for bookings with connecting flights)

@@ -18,7 +18,7 @@ async function main() {
             throw (e);
         }
 
-        await findFlights(client, "2021-12-01", "Houston", "Los Angeles");
+        await findFlights(client, "2021-12-01", "Houston", "Madrid");
 
 
         throw ("Ending Correctly");
@@ -49,7 +49,7 @@ async function findFlights(client, departure_date, departure_city, arrival_city)
     //get arrivalAirportCode
     var arrivalAirportCode = await client.query(
         `SELECT airport_code\r
-            FROM airport_citie\r
+            FROM airport_cities\r
             WHERE city_name = '${arrival_city}';\r\r`
     );
     fs.appendFileSync("query.sql", "//Get arrivalAirportCode//\r\r" + arrivalAirportCode, function (err) {
@@ -116,7 +116,7 @@ async function findFlights(client, departure_date, departure_city, arrival_city)
 //             ON f1.arrival_airport_code = f2.departure_airport_code
 //         WHERE f2.departure_time > f1.arrival_time AND
 //             f1.departure_airport_code = 'IAH' AND
-//             f2.arrival_airport_code = 'BKK' AND
+//             f2.arrival_airport_code = 'TOJ' AND
 //             DATE(f1.departure_time) = '2021-12-01'
 //         ORDER BY f2.departure_time ASC
 //         LIMIT 20

@@ -1,3 +1,4 @@
+var fs = require("fs");
 main();
 
 async function main() {
@@ -37,7 +38,7 @@ async function main() {
             //if i%15 = 0 -> Bangkok, i%15=1 -> London, etc
             //add interval 'i%(24*15) days'
             //add interval 'i%24 hours'
-            var departTime = `current_date + interval '7 days' + interval '${d} days' + interval '${i%24} hours'`;
+            var departTime = `current_date + interval '1 days' + interval '${d} days' + interval '${i%24} hours'`;
             flight.push(departTime);
 
             //push departure_airport_code
@@ -56,8 +57,12 @@ async function main() {
                     ) as distance;` //distance in miles 
             var time_traveled = await client.query(calculate_flight_time);
             time_traveled = time_traveled.rows[0]["distance"];
-            time_traveled /= 500;
-            flight.push(`CURRENT_DATE + interval '7 days' + interval '${time_traveled} hours'`);
+            time_traveled = (time_traveled / 500).toFixed(2);
+            // console.log(time_traveled);
+            flight.push(
+                `${departTime} + interval '${time_traveled} hours'`
+            );
+
 
             //push arrival_airport_code
             flight.push(arrival_airport_code);
@@ -89,10 +94,10 @@ async function main() {
             // console.log(`INSERT INTO flights (departure_gate, departure_time ,departure_airport_code,arrival_gate,arrival_time,arrival_airport_code,baggage_claim,aircraft_code,available_economy_seats,available_business_seats)
             // VALUES ('${flights[i][0]}', ${flights[i][1]}, '${flights[i][2]}','${flights[i][3]}',${flights[i][4]},'${flights[i][5]}','${flights[i][6]}','${flights[i][7]}',${flights[i][8]},${flights[i][9]});`);
             // console.log("j:",j," gave departure_airport_code:",departure_airport_code);
-            await client.query(
-                `INSERT INTO flights (departure_gate,departure_time ,departure_airport_code,arrival_gate,arrival_time,arrival_airport_code,baggage_claim,aircraft_code,available_economy_seats,available_business_seats)
-                VALUES ('${flights[i][0]}', ${flights[i][1]}, '${flights[i][2]}','${flights[i][3]}',${flights[i][4]},'${flights[i][5]}','${flights[i][6]}','${flights[i][7]}',${flights[i][8]},${flights[i][9]});`
-            );
+            // await client.query(
+            //     `INSERT INTO test (departure_gate,departure_time ,departure_airport_code,arrival_gate,arrival_time,arrival_airport_code,baggage_claim,aircraft_code,available_economy_seats,available_business_seats)
+            //     VALUES ('${flights[i][0]}', ${flights[i][1]}, '${flights[i][2]}','${flights[i][3]}',${flights[i][4]},'${flights[i][5]}','${flights[i][6]}','${flights[i][7]}',${flights[i][8]},${flights[i][9]});`
+            // );
 
             if (i != 0 && i % 15 == 0)
                 ++j; //used for selecting departure airport
@@ -100,12 +105,13 @@ async function main() {
             if (i != 0 && i % 360 == 0) ++d; //used for adding days to our departure time
         }
 
-        // for (let i = 0; i < numFlights; ++i) {
-        //     await client.query(
-        //         `INSERT INTO flights (departure_gate,departure_time ,departure_airport_code,arrival_gate,arrival_time,arrival_airport_code,baggage_claim,aircraft_code,available_economy_seats,available_business_seats)
-        //         VALUES ('${flights[i][0]}', ${flights[i][1]}, '${flights[i][2]}','${flights[i][3]}',${flights[i][4]},'${flights[i][5]}','${flights[i][6]}','${flights[i][7]}',${flights[i][8]},${flights[i][9]});`
-        //     );
-        // }
+        for (let i = 0; i < numFlights; ++i) {
+            await client.query(
+                // console.log(
+                `INSERT INTO flights (departure_gate,departure_time ,departure_airport_code,arrival_gate,arrival_time,arrival_airport_code,baggage_claim,aircraft_code,available_economy_seats,available_business_seats)
+                VALUES ('${flights[i][0]}', ${flights[i][1]}, '${flights[i][2]}','${flights[i][3]}',${flights[i][4]},'${flights[i][5]}','${flights[i][6]}','${flights[i][7]}',${flights[i][8]},${flights[i][9]});`
+            );
+        }
 
 
         throw ("Ending Correctly");

@@ -1,7 +1,8 @@
 .checkout-container {
     display:flex;
     flex-direction: row;
-    margin-top: 80px;
+    margin-top: 20px;
+    animation: fade 0.2s ease;
 }
 
 /*User's personal info*/

@@ -9,6 +9,7 @@ import { FlightLand, FlightTakeoff, Send } from "@mui/icons-material";
 import { Navigate } from "react-router-dom";
 
 function Search() {
+    ///////////////////////////////////////Config///////////////////////////////////////////////////
     const today = new Date();
     const [departureDate, setDepartureDate] = useState(today);
     const [arrivalDate, setArrivalDate] = useState(departureDate);
@@ -48,6 +49,7 @@ function Search() {
         // submit form
         setRedirect(true);
     };
+    //////////////////////////////////////////queries//////////////////////////////////////////////////////
 
     return (
         <div className="search-container">

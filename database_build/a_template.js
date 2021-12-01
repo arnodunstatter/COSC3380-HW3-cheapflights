@@ -31,3 +31,11 @@ async function main() {
     }
 
 }
+
+// fs.appendFileSync("transaction.sql", " ", function (err) {
+//     console.log(err);
+//   });
+
+//   fs.appendFileSync("query.sql", " ", function (err) {
+//     console.log(err);
+//   });

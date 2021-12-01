@@ -1,53 +1,36 @@
-            for(let passport_no = 987654321; passport_no < 987654321+20; ++passport_no)
-            {
-                for(let flight_no = 654321; flight_no < 654324; ++flight_no)
-                    {
-                        var addPerson = 
-`INSERT INTO economy_waitlist (position, flight_no, passport_no)
-VALUES (
-    CASE
-        WHEN (SELECT MAX(position)+1
-                FROM economy_waitlist
-                GROUP BY flight_no='${flight_no}'
-                HAVING flight_no='${flight_no}') IS NULL THEN 1,
-        ELSE (SELECT MAX(position)+1
-                FROM economy_waitlist
-                GROUP BY flight_no='${flight_no}'
-                HAVING flight_no='${flight_no}'),
-        END
-    '${flight_no}',
-    '${passport_no}'
-                    );`;
-                await client.query(addPerson);
-                    }
-            }
+var fs = require("fs");
+main();
 
-            var queryStr =
-`do $$
-declare
-  selectedRow economy_waitlist%rowtype;
-begin  
+async function main() {
+    //now we make our client using our creds
+    const {
+        Client
+    } = require('pg');
+    const creds = require('./creds.json');
+    const client = new Client(creds);
 
- SELECT * INTO selectedRow
-    FROM economy_waitlist
-    WHERE flight_no='654321' AND position = 1;
-  
-    if not found then
-        INSERT INTO economy_waitlist (position, flight_no, passport_no)
-            VALUES
-            (
-                1, '654321','987654321'
-            );
-    else
-        INSERT INTO economy_waitlist (position, flight_no, passport_no)
-            VALUES
-            (
-                (SELECT MAX(position)+1
-                    FROM economy_waitlist
-                    GROUP BY flight_no='654321'
-                    HAVING flight_no='654321'),
-                '654321',
-                '987654321'
-            )
-  end if;
-end $$;`;
+    try {
+        try {
+            client.connect();
+
+        } catch (e) {
+            console.log("Problem connecting client");
+            throw (e);
+        }
+        //say someone has already checked in and been given their boarding_pass
+        var queryStr = "SELECT *\rFROM table_name;\r\r";
+        await client.query(queryStr);
+        fs.appendFileSync("query.sql", queryStr, function (err) {
+            console.log(err);
+        });
+
+        throw ("Ending Correctly");
+    } catch (e) {
+        console.error(e);
+        client.end();
+        console.log("Disconneced");
+        console.log("Process ending");
+        process.exit();
+    }
+
+}

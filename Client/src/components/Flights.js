@@ -310,7 +310,7 @@ function Flights() {
             <Link className="view-btn" to="/search-flight">
                 <button className="view-goback-btn">Back</button>
             </Link>
-            <Link className="view-btn" to="/checkout">
+            <Link className="flights-btn-container" to="/checkout">
                 <button className="view-goback-btn">Checkout</button>
             </Link>
         </div>

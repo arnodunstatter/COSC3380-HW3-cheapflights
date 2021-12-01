@@ -1,4 +1,5 @@
-main(); 
+var fs = require("fs");
+main();
 
 async function main() {
     //now we make our client using our creds
@@ -37,28 +38,40 @@ async function main() {
             ticket.push(depart_date);
 
             //push seat class
-            var seat_class_sql = `SELECT CASE WHEN EXISTS(SELECT economy_seats FROM passengers_bookings LEFT JOIN bookings USING(book_ref) 
-                                WHERE economy_seats = 1 AND book_ref = '${i+1}') THEN 'economy' ELSE 'business' END;`;
+            var seat_class_sql = `SELECT\rCASE WHEN EXISTS(SELECT economy_seats\rFROM passengers_bookings\rLEFT JOIN bookings USING(book_ref)\r
+                                WHERE economy_seats = 1 AND book_ref = '${i+1}')\r THEN 'economy' ELSE 'business' END;\r\r`;
             var seat_class = await client.query(seat_class_sql);
+            fs.appendFileSync("query.sql", "//Get seat class//" + seat_class_sql, function (err) {
+                console.log(err);
+            });
             seat_class = seat_class.rows[0]["case"];
             ticket.push(seat_class);
 
             //push book_ref
-            var book_ref_sql = `SELECT book_ref FROM passengers_bookings LEFT JOIN bookings USING(book_ref) WHERE book_ref = '${i+1}'`;
+            var book_ref_sql = `SELECT book_ref\rFROM passengers_bookings\rLEFT JOIN bookings USING(book_ref)\rWHERE book_ref = '${i+1}'\r\r`;
             var book_ref = await client.query(book_ref_sql);
+            fs.appendFileSync("query.sql", "//Get book reference//" + book_ref_sql, function (err) {
+                console.log(err);
+            });
             book_ref = book_ref.rows[0]["book_ref"];
             ticket.push(book_ref);
 
             //push passport_no
-            var passport_no_sql = `SELECT passport_no FROM passengers_bookings LEFT JOIN bookings USING(book_ref) WHERE book_ref = '${i+1}'`;
+            var passport_no_sql = `SELECT passport_no\rFROM passengers_bookings\rLEFT JOIN bookings USING(book_ref)\rWHERE book_ref = '${i+1}';\r\r`;
+            fs.appendFileSync("query.sql", "//Get passport number//" + passport_no_sql, function (err) {
+                console.log(err);
+            });
             var passport_no = await client.query(passport_no_sql);
             passport_no = passport_no.rows[0]["passport_no"];
             ticket.push(passport_no);
 
             //push flight_no
             //to change flight number, change OFFSET; OFFSET 0 == first flight_no in flights table, OFFSET 1 == second flight_no...etc
-            var flight_no_sql = `SELECT flight_no FROM flights ORDER BY flight_no asc LIMIT 1 OFFSET 0;`;
+            var flight_no_sql = `SELECT flight_no\rFROM flights\rORDER BY flight_no ASC\rLIMIT 1 OFFSET 0;\r\r`;
             var flight_no = await client.query(flight_no_sql);
+            fs.appendFileSync("query.sql", "//Get flight number//" + flight_no_sql, function (err) {
+                console.log(err);
+            });
             flight_no = flight_no.rows[0]["flight_no"];
             ticket.push(flight_no);
 
@@ -70,6 +83,9 @@ async function main() {
                 `INSERT INTO tickets (depart_date, seat_class, book_ref, passport_no, flight_no)
                 VALUES (${tickets[i][0]}, '${tickets[i][1]}', ${tickets[i][2]},'${tickets[i][3]}',${tickets[i][4]});`
             );
+            fs.appendFileSync("query.sql", "//Insert into tickets table//\r\rINSERT INTO tickets (depart_date, seat_class, book_ref, passport_no, flight_no)\rVALUES (${tickets[i][0]}, '${tickets[i][1]}', ${tickets[i][2]},'${tickets[i][3]}',${tickets[i][4]});\r\r", function (err) {
+                console.log(err);
+            });
 
         }
         // console.log(tickets);

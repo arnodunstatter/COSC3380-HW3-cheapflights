@@ -1,5 +1,5 @@
 .search-container {
-    margin-top: 100px;
+    margin-top: 20px;
     max-height: 500px;
     box-shadow: 0 0 10px #d9d9d9;
     display: flex;
@@ -8,6 +8,7 @@
     flex-direction: column;
     padding: 30px 10px 30px;
     border-radius: 20px;
+    animation: fade 0.2s ease;
 }
 
 .search-selection {

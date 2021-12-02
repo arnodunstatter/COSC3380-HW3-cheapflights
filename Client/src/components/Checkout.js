@@ -18,9 +18,7 @@ function Checkout() {
     const [discountCode, setDiscountCode] = useState("");
     const [completedBooking, setCompletedBooking] = useState(false); 
     const location = useLocation();
-
-    const state = location.state;
-    
+    const state = location.state;    
     function inputValidation() {
         
     }
@@ -53,6 +51,7 @@ function Checkout() {
     };
     function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
+
     let totalPrice = state.bookingType == "Round Trip" ?
         state.flightData.desFlightData.price + state.flightData.arrivalFlightData.price
         : state.flightData.desFlightData.price; 
@@ -60,7 +59,7 @@ function Checkout() {
     return(
         <div className='checkout-container'>
             <div className='checkout-confirmation-container'>
-                {state && [...Array(state.numPassenger).keys()].map((val) =>
+                {state && [...Array(parseInt(state.numPassenger)).keys()].map((val) =>
                     <PassengerInfo
                         val={val}
                         completedBooking={completedBooking}
@@ -184,17 +183,16 @@ function PassengerInfo(props) {
 
     function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
-
+   
     //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
     useEffect(() => {
-        console.log("hello");
-        console.log(props.completedBooking)
-        if (props.completedBooking) {
-            let newPassengers = [...props.passengers, [passportNum, firstName, lastName, email, phoneNum, formatDate(dateOB), props.seatClass]];
-            props.setPassengers(newPassengers)
-        }
+        console.log("trigger: ", props.completedBooking);
+        console.log("array", props.passengers);
         
-    }, [props.completedBooking]);
+        let newPassengers = [...props.passengers, [passportNum, firstName, lastName, email, phoneNum, formatDate(dateOB), props.seatClass]];
+        props.setPassengers(newPassengers)
+        
+    }, [ props.completedBooking]);
 
     return (
         <div className='checkout-confirmation'>

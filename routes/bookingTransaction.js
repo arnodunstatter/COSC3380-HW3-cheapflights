@@ -23,6 +23,7 @@ module.exports = app => {
                 //**after user clicks PAY button, complete bookings and generate tickets */
                 //creates entries in bookings, tickets, passengers, and passengers_bookings and updates available_seats in flights
                 //the following values will be input by user in the web-form
+                /*
                 var flight_nos = [4997, 5266]; //this will be 'input' by the user by them selecting a viable flight after they specify the whens and wheres
                 var economySeats = 2;
                 var businessSeats = 1;
@@ -36,7 +37,7 @@ module.exports = app => {
                     ["987456321", "Bill", "Billson", "bill_billson@hotmail.org", "5128447733", "1951-02-02", "economy"],
                     ["159753852", "Kevin", "Kevinson", "kevin_kevinson@hotmail.org", "512812999", "1953-03-03", "business"]
                 ];
-
+                */
                 // var passengersInfo = [
                 //     //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
                 //     ["660766997", "Mahatma", "Gandhi", "amimojo@live.com", "5424782483", "1954-12-01", "economy"],

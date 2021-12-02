@@ -35,38 +35,40 @@ async function main() {
 
 async function findFlights(client, departure_date, departure_city, arrival_city) {
     var applicableFlights = []; //applicablFlights = [ [directFlight1], [directFlight2], [ Flight1,Flight2 ] ]
+    async function clientQueryAndWriteToQuerySQL(client, transactionStr)
+    {
+        fs.appendFileSync("query.sql", transactionStr+"\r", function (err) {
+            console.log(err);
+        });
+        return await client.query(transactionStr);
+    }
+
 
     //get departureAirportCode 
-    var departureAirportCode = await client.query(
-        `SELECT airport_code\r
-            FROM airport_cities\r
-            WHERE city_name = '${departure_city}';\r\r`
+    var departureAirportCode = await clientQueryAndWriteToQuerySQL(client,
+`\r\rSELECT airport_code
+FROM airport_cities
+WHERE city_name = '${departure_city}';`
     );
-    fs.appendFileSync("query.sql", "//Get departureAirportCode//\r\r" + departureAirportCode, function (err) {
-        console.log(err);
-    });
+
     departureAirportCode = departureAirportCode.rows[0]["airport_code"];
     //get arrivalAirportCode
-    var arrivalAirportCode = await client.query(
-        `SELECT airport_code\r
-            FROM airport_cities\r
-            WHERE city_name = '${arrival_city}';\r\r`
+    var arrivalAirportCode = await clientQueryAndWriteToQuerySQL(client,
+`\r\rSELECT airport_code
+FROM airport_cities
+WHERE city_name = '${arrival_city}';`
     );
-    fs.appendFileSync("query.sql", "//Get arrivalAirportCode//\r\r" + arrivalAirportCode, function (err) {
-        console.log(err);
-    });
+
     arrivalAirportCode = arrivalAirportCode.rows[0]["airport_code"];
 
-    var directFlights = await client.query(
-        `SELECT flight_no\r
-            FROM flights\r
-            WHERE departure_airport_code = '${departureAirportCode}' AND 
-                arrival_airport_code = '${arrivalAirportCode}' AND 
-                DATE(departure_time) = '${departure_date}';\r\r`
+    var directFlights = await clientQueryAndWriteToQuerySQL(client,
+`\r\rSELECT flight_no
+FROM flights
+WHERE departure_airport_code = '${departureAirportCode}' 
+    AND arrival_airport_code = '${arrivalAirportCode}' 
+    AND DATE(departure_time) = '${departure_date}';`
     );
-    fs.appendFileSync("query.sql", "//Get direct flights//\r\r" + directFlights, function (err) {
-        console.log(err);
-    });
+
     directFlights = directFlights.rows;
     //convert from array of maps to array of arrays
     for (let i = 0; i < directFlights.length; ++i)
@@ -77,22 +79,20 @@ async function findFlights(client, departure_date, departure_city, arrival_city)
         applicableFlights.push([directFlights[i]]);
 
 
-    var connectingFlights = await client.query(
-        `SELECT f1.flight_no AS flight_no_1, f2.flight_no AS flight_no_2\r
-        FROM flights AS f1\r
-        JOIN flights AS f2\r
-            ON f1.arrival_airport_code = f2.departure_airport_code\r
-        WHERE f2.departure_time > f1.arrival_time AND
-            f1.departure_airport_code = '${departureAirportCode}' AND
-            f2.arrival_airport_code = '${arrivalAirportCode}' AND
-            DATE(f1.departure_time) = '${departure_date}'
-        ORDER BY f2.departure_time ASC\r
-        LIMIT 20;\r\r`
+    var connectingFlights = await clientQueryAndWriteToQuerySQL(client,
+`\r\rSELECT f1.flight_no AS flight_no_1, f2.flight_no AS flight_no_2
+FROM flights AS f1
+JOIN flights AS f2
+    ON f1.arrival_airport_code = f2.departure_airport_code
+WHERE f2.departure_time > f1.arrival_time 
+    AND f1.departure_airport_code = '${departureAirportCode}' 
+    AND f2.arrival_airport_code = '${arrivalAirportCode}' 
+    AND DATE(f1.departure_time) = '${departure_date}'
+    ORDER BY f2.departure_time ASC
+    LIMIT 20;`
     );
 
-    fs.appendFileSync("query.sql", "//Get connecting flights//\r\r" + connectingFlights, function (err) {
-        console.log(err);
-    });
+
     connectingFlights = connectingFlights.rows;
     //convert from array of maps to array of arrays
     for (let i = 0; i < connectingFlights.length; ++i)

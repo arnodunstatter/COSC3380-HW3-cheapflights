@@ -40,21 +40,26 @@ async function loginDisplayTickets(client, email_address) {
         //departing_city, departing_country, airport_code, airport_name, arrival_time, arrival_city, 
         //arrival_country, seat_class, book_ref, total_amount 
 
-        var display_tickets = await client.query(`
-        SELECT t.ticket_no, f.flight_no, plane.aircraft_code, plane.aircraft_name, p.passport_no, dep.airport_code AS departure_airport_code, dep.airport_name AS departure_airport_name, f.departure_time,\r
-        dep.city_name AS departing_city, dep.country AS departing_country, arr.airport_code AS arrival_airport_code, arr.airport_name AS arrival_airport_name, f.arrival_time, arr.city_name AS arrival_city,\r 
-        arr.country AS arrival_country, t.seat_class, b.book_ref, b.total_amount\r
-        FROM tickets AS t\r
-        LEFT JOIN bookings AS b USING(book_ref)\r
-        LEFT JOIN flights AS f USING(flight_no)\r
-        LEFT JOIN airport_cities AS arr ON arr.airport_code = f.arrival_airport_code\r
-        LEFT JOIN airport_cities AS dep ON dep.airport_code = f.departure_airport_code\r
-        LEFT JOIN passengers AS p USING(passport_no)\r
-        LEFT JOIN aircraft AS plane USING(aircraft_code)\r
-        WHERE email_address = '${email_address}';\r`);
-        fs.appendFileSync("query.sql", "--Display tickets--\r\r" + display_tickets, function (err) {
-            console.log(err);
-        });
+        async function clientQueryAndWriteToQuerySQL(client, transactionStr)
+        {
+            fs.appendFileSync("query.sql", transactionStr+"\r", function (err) {
+                console.log(err);
+            });
+            return await client.query(transactionStr);
+        }
+        var display_tickets = await clientQueryAndWriteToQuerySQL(client,
+`\r\rSELECT t.ticket_no, f.flight_no, plane.aircraft_code, plane.aircraft_name, p.passport_no, dep.airport_code AS departure_airport_code, dep.airport_name AS departure_airport_name, f.departure_time,
+            dep.city_name AS departing_city, dep.country AS departing_country, arr.airport_code AS arrival_airport_code, arr.airport_name AS arrival_airport_name, f.arrival_time, arr.city_name AS arrival_city,
+            arr.country AS arrival_country, t.seat_class, b.book_ref, b.total_amount
+FROM tickets AS t
+LEFT JOIN bookings AS b USING(book_ref)
+LEFT JOIN flights AS f USING(flight_no)
+LEFT JOIN airport_cities AS arr ON arr.airport_code = f.arrival_airport_code
+LEFT JOIN airport_cities AS dep ON dep.airport_code = f.departure_airport_code
+LEFT JOIN passengers AS p USING(passport_no)
+LEFT JOIN aircraft AS plane USING(aircraft_code)
+WHERE email_address = '${email_address}';`);
+
         console.log(display_tickets.rows);
 
 

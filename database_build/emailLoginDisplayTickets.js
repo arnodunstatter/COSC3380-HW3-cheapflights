@@ -35,11 +35,6 @@ async function main() {
 async function loginDisplayTickets(client, email_address) {
     try {
 
-        await client.query("BEGIN;"); //start our transaction
-        fs.appendFileSync("transaction.sql", "//Begin transaction for displaying tickets to users after email login//\r\rBEGIN;\r\r", function (err) {
-            console.log(err);
-        });
-
         //displays 1
         //ticket_no, flight_no, aircraft_code, aircraft_name, passport_no, airport_code, airport_name, departure_time, 
         //departing_city, departing_country, airport_code, airport_name, arrival_time, arrival_city, 
@@ -57,25 +52,18 @@ async function loginDisplayTickets(client, email_address) {
         LEFT JOIN passengers AS p USING(passport_no)\r
         LEFT JOIN aircraft AS plane USING(aircraft_code)\r
         WHERE email_address = '${email_address}';\r`);
-        fs.appendFileSync("transaction.sql", "//Display tickets//\r\r" + display_tickets, function (err) {
+        fs.appendFileSync("query.sql", "--Display tickets--\r\r" + display_tickets, function (err) {
             console.log(err);
         });
         console.log(display_tickets.rows);
 
-        await client.query("COMMIT;");
-        fs.appendFileSync("transaction.sql", "COMMIT;\r\r", function (err) {
-            console.log(err);
-        });
+
 
     } catch (e) {
-        await client.query("ROLLBACK;");
-        fs.appendFileSync("transaction.sql", "ROLLBACK;\r\r", function (err) {
-            console.log(err);
-        });
         throw (e); //will bypass the "Ending Correctly" throw
     }
-
 }
+
 
 
 // SELECT t.ticket_no, f.flight_no, plane.aircraft_code, plane.aircraft_name, p.passport_no, dep.airport_code, dep.airport_name, f.departure_time, dep.city_name AS departing_city, dep.country AS departing_country, arr.airport_code, arr.airport_name, f.arrival_time, arr.city_name AS arrival_city, arr.country AS arrival_country, t.seat_class, b.book_ref, b.total_amount 

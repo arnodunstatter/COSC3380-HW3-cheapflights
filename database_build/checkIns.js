@@ -52,7 +52,7 @@ async function checkIn(client, ticket_no, number_of_bags) {
         fs.appendFileSync("transaction.sql", `\r\r--The following sql statements are part of the transaction for checkIn(client,${ticket_no}, ${number_of_bags})\r`, function (err) {
             console.log(err);
         });
-        await client.query("BEGIN;"); //start our transaction
+        await clientQueryAndWriteToTransactionSQL(client,"BEGIN;"); //start our transaction
 
         await clientQueryAndWriteToTransactionSQL(client,
 `INSERT INTO baggage_info(number_of_bags)

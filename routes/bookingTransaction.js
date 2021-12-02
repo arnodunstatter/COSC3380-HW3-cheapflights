@@ -1,14 +1,15 @@
-
 module.exports = app => {
-    app.post('/confirmation', async (req, res) => {
+    app.post('/checkout-Confirmation', async (req, res) => {
+        var fs = require("fs");
         main(req.body.flight_nos, req.body.economySeats, req.body.businessSeats, req.body.discount_code, req.body.card_no, req.body.passengersInfo);
         
         async function main(flight_nos, economySeats, businessSeats, discount_code, card_no, passengersInfo) {
             //now we make our client using our creds
+            
             const {
                 Client
             } = require('pg');
-            const creds = require('./creds.json');
+            const creds = require('../config/creds.json');
             const client = new Client(creds);
 
             try {
@@ -56,13 +57,14 @@ module.exports = app => {
                 //flight_nos is an array containing 1 or more flight_no (>1 for bookings with connecting flights)
                 //passengersInfo is an array of arrays where each internal array has [passport_no, first_name, last_name, email_address, phone_no, DOB, seatClass]
                 await makeBooking(client, flight_nos, economySeats, businessSeats, discount_code, card_no, passengersInfo);
-
+                res.json("Ending Correctly");
                 throw ("Ending Correctly");
             } catch (e) {
                 console.error(e);
                 client.end();
                 console.log("Disconneced");
                 console.log("Process ending");
+                res.json(e.detail);
                 process.exit();
             }
 

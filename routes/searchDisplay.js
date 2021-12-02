@@ -1,6 +1,7 @@
 module.exports = app => {
     app.post('/search-flight/flights', async (req, res) => {
         console.log(req.body);
+        var fs = require("fs");
         main(req.body.departure_date, req.body.departureCity, req.body.arrivalCity, req.body.numPassenger, req.body.seatClass);
         
         async function main(departure_date, departure_city, arrival_city, passengerNum, seat_class) {
@@ -47,8 +48,7 @@ module.exports = app => {
             let price = (seat_class == 'business') ? 'bus_price' : 'econ_price';
             let available_seats = (seat_class == 'business') ? 'available_bussiness_seats' : 'available_economy_seats';
             try {
-                var flightInfo = await client.query(
-                `SELECT f.flight_no, f.departure_time, f.arrival_time, f.${price} AS price,
+                searchFlightQuery = `SELECT f.flight_no, f.departure_time, f.arrival_time, f.${price} AS price,
                 f.${available_seats} AS available_seats,
                 AGE( f.arrival_time, f.departure_time) as elapsedTime, 0 as stop,
                 d.city_name as departureCity, f.departure_airport_code as departureAirPortCode,
@@ -104,8 +104,12 @@ module.exports = app => {
                     (f2.${available_seats}) >= '${passengerNum}' 
                 ORDER BY 7,2 ASC
                 LIMIT 20;`
-                );
+                var flightInfo = await client.query(searchFlightQuery);
                 console.log(await flightInfo.rows);
+                fs.appendFileSync("query.sql",
+                    "\n\rSearching for direct, connecting, one-way, or round-way trips all in the same query for speed purposes: \n\n" + searchFlightQuery + "\r", function (err) {
+                    console.log(err);
+                });
                 res.json(flightInfo.rows);
             } catch (e) {
                 console.log (e); //will bypass the "Ending Correctly" throw

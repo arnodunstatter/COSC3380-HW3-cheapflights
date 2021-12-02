@@ -2,7 +2,7 @@
  module.exports = app => {
     app.post('/check-in', async(req, res) => {
         main();
-
+        var fs = require("fs");
         async function main() {
             //now we make our client using our creds
             const {

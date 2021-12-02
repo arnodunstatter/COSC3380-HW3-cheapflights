@@ -5,46 +5,79 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { format } from 'date-fns';
 import moment from 'moment-timezone';
-import { IMaskInput } from 'react-imask';
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 
 
 function Checkout() {
     const [passengers, setPassengers] = useState([]);
     const [cardNum, setCardNum] = useState("");
     const [discountCode, setDiscountCode] = useState("");
-    const [completedBooking, setCompletedBooking] = useState(false); 
+    const [completedBooking, setCompletedBooking] = useState(false);
     const location = useLocation();
-    const state = location.state;    
-    function inputValidation() {
-        
+    const state = location.state;
+
+    const [confirm, setConfirm] = useState(false);
+    const [bookingResponse, setBookingResponse] = useState(""); 
+
+    const confirmationDialog = () => {
+        return (
+            <div>
+                <Dialog
+                    open={confirm}
+                    onClose={setConfirm}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            The booking was confirmed! {bookingResponse}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={setConfirm}>Disagree</Button>
+                        <Button onClick={setConfirm} autoFocus>
+                            Agree
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+
+        );
     }
 
-    const completeBooking = async () => {  
+    const completeBooking = async () => {
         setCompletedBooking(true);
-        inputValidation();
-        try { 
+        try {
             const body = {
-                flight_nos: state.flightNums ,
-                economySeats: state.seatClass == "economy" ? parseInt(state.numPassenger): 0,
+                flight_nos: state.flightNums,
+                economySeats: state.seatClass == "economy" ? parseInt(state.numPassenger) : 0,
                 businessSeats: state.seatClass == "business" ? parseInt(state.numPassenger) : 0,
-                discount_code: discountCode? discountCode : "none",
+                discount_code: discountCode ? discountCode : "none",
                 card_no: cardNum,
                 passengersInfo: passengers
             };
             console.log(body);
-            /*
-            const response = await fetch("http://localhost:5000/search-flight/flights", {
+            const response = await fetch("http://localhost:5000/checkout-Confirmation", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
-            });
-                navigate("/search-flight/flights", { state: [{ numPassenger, bookingType, seatClass }, await response.json()] });
+            }).then((value) => {
+                //navigate("/search-flight/flights", { state: value });
+            }, reason => {
+                console.error(reason); // Error!
             }
-            */
+            );
+
         } catch (error) {
             console.log(error);
         }
@@ -54,10 +87,11 @@ function Checkout() {
 
     let totalPrice = state.bookingType == "Round Trip" ?
         state.flightData.desFlightData.price + state.flightData.arrivalFlightData.price
-        : state.flightData.desFlightData.price; 
+        : state.flightData.desFlightData.price;
 
-    return(
+    return (
         <div className='checkout-container'>
+            {confirmationDialog()}
             <div className='checkout-confirmation-container'>
                 {state && [...Array(parseInt(state.numPassenger)).keys()].map((val) =>
                     <PassengerInfo
@@ -78,8 +112,8 @@ function Checkout() {
                     }}
                         value={cardNum}
                         onChange={(event) => setCardNum(event.target.value)}
-                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' , minLength:16, maxLength: 16}}
-                        error={(isNumber(cardNum) == false) && cardNum.length != 0 }
+                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', minLength: 16, maxLength: 16 }}
+                        error={(isNumber(cardNum) == false) && cardNum.length != 0}
 
                     />
                     <TextField label="Discount Code" variant="outlined" size="small" sx={{
@@ -105,7 +139,7 @@ function Checkout() {
                             <li className='checkout-form-h4'>Please read important information regarding airline liability limitations.</li>
                             <li className='checkout-form-h4'>Prices may not include baggage fees or other fees charged directly by the airline.</li>
                             <li className='checkout-form-h4'>Fares are not guaranteed until ticketed.</li>
-                        </ul> 
+                        </ul>
                     </div>
 
                     <div className='checkout-form-section'>
@@ -136,14 +170,14 @@ function Checkout() {
                     (state.flightData.arrivalFlightData.typeFlight == "Direct Flight") ?
                         state.flightData.arrivalFlightData.arrivalLoc[0] : state.flightData.arrivalFlightData.arrivalLoc[1]}</p>
                 <p className='checkout-form-h3'>{state.flightData.desFlightData.departureDate[0]}</p>
-                
+
                 <p className='checkout-form-h4'>CheapFlights Airlines {state.flightNums[0]}</p>
                 <div className='checkout-price-summary'>
                     <p className='checkout-form-h1'>Price summary</p>
 
                     <div className='checkout-price'>
                         <p className='checkout-form-h4'>Traveler(s):</p>
-                        <p className='checkout-form-h4'>{ state.numPassenger}</p>
+                        <p className='checkout-form-h4'>{state.numPassenger}</p>
                     </div>
                     <div className='checkout-price'>
                         <p className='checkout-form-h4'>Flight:</p>
@@ -176,23 +210,23 @@ function PassengerInfo(props) {
     const [email, setEmail] = useState("");
     const [dateOB, setDateOB] = useState(moment().subtract(18, "years"));
     const [passportNum, setPassportNum] = useState("");
-    
+
     function formatDate(timestamp) {
         return format(new Date(timestamp), 'yyyy-MM-dd');
     }
 
     function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
-   
+
     //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
     useEffect(() => {
         console.log("trigger: ", props.completedBooking);
         console.log("array", props.passengers);
-        
+
         let newPassengers = [...props.passengers, [passportNum, firstName, lastName, email, phoneNum, formatDate(dateOB), props.seatClass]];
         props.setPassengers(newPassengers)
-        
-    }, [ props.completedBooking]);
+
+    }, [props.completedBooking]);
 
     return (
         <div className='checkout-confirmation'>
@@ -231,7 +265,7 @@ function PassengerInfo(props) {
                     value={phoneNum}
                     onChange={(event) => setPhoneNum(event.target.value)}
                     inputProps={{ pattern: '[0-9]*', inputMode: 'numeric', minLength: 10, maxLength: 10 }}
-                    error={isNumber(phoneNum) == false && phoneNum.length!=0}
+                    error={isNumber(phoneNum) == false && phoneNum.length != 0}
                 />
 
                 <TextField label="Email" variant="outlined" size="small" sx={{

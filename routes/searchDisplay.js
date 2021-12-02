@@ -98,7 +98,7 @@ module.exports = app => {
                 INNER JOIN airport_cities as m ON f2.departure_airport_code = m.airport_code
                 WHERE d.city_name = '${departure_city}' AND a.city_name = '${arrival_city}' AND
                     f2.departure_time > (f1.arrival_time + INTERVAL '1 Hour') AND
-                    f2.departure_time < (f1.arrival_time + INTERVAL '18 Hour') AND 
+                    f2.departure_time < (f1.arrival_time + INTERVAL '6 Hour') AND 
                     DATE(f1.departure_time) = '${departure_date}' AND
                     (f1.${available_seats}) >= '${passengerNum}' AND
                     (f2.${available_seats}) >= '${passengerNum}' 
@@ -178,3 +178,19 @@ module.exports = app => {
                 ORDER BY 7,2 ASC
                 LIMIT 20;`
 
+
+/*
+ SELECT f1.arrival_time, f1.arrival_time + INTERVAL '12 Hour', f2.departure_time
+                
+                FROM flights AS f1
+                INNER JOIN flights AS f2 ON
+f1.arrival_airport_code = f2.departure_airport_code AND
+f1.departure_airport_code != f2.departure_airport_code
+                INNER JOIN airport_cities as d ON f1.departure_airport_code = d.airport_code
+                INNER JOIN airport_cities as a ON f2.arrival_airport_code = a.airport_code
+                INNER JOIN airport_cities as m ON f2.departure_airport_code = m.airport_code
+                WHERE d.city_name = 'Houston' AND a.city_name = 'Seattle' AND
+f2.departure_time > (f1.arrival_time + INTERVAL '1 Hour') AND
+f2.departure_time < (f1.arrival_time + INTERVAL '8 Hour')
+order by 2 DESC;
+      */

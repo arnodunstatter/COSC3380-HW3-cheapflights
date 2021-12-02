@@ -6,9 +6,9 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-
 import { format } from 'date-fns';
-
+import moment from 'moment-timezone';
+import { IMaskInput } from 'react-imask';
 
 
 
@@ -21,8 +21,13 @@ function Checkout() {
 
     const state = location.state;
     
+    function inputValidation() {
+        
+    }
+
     const completeBooking = async () => {  
         setCompletedBooking(true);
+        inputValidation();
         try { 
             const body = {
                 flight_nos: state.flightNums ,
@@ -46,6 +51,7 @@ function Checkout() {
             console.log(error);
         }
     };
+    function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
     let totalPrice = state.bookingType == "Round Trip" ?
         state.flightData.desFlightData.price + state.flightData.arrivalFlightData.price
@@ -66,13 +72,16 @@ function Checkout() {
 
                 <div className='checkout-payment'>
                     <p className='checkout-form-h1'><i class="fas fa-lock"></i> How would you like to pay?</p>
-                    <TextField label="Debit/Credit card number" variant="outlined" size="small" sx={{ 
+                    <TextField label="Debit/Credit card number" variant="outlined" size="small" sx={{
                         width: 300,
                         height: 5,
                         my: 4
                     }}
                         value={cardNum}
-                        onChange={(event) => setCardNum(event.target.value)}         
+                        onChange={(event) => setCardNum(event.target.value)}
+                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' , minLength:16, maxLength: 16}}
+                        error={(isNumber(cardNum) == false) && cardNum.length != 0 }
+
                     />
                     <TextField label="Discount Code" variant="outlined" size="small" sx={{
                         width: 300,
@@ -81,6 +90,7 @@ function Checkout() {
                     }}
                         value={discountCode}
                         onChange={(event) => setDiscountCode(event.target.value)}
+                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                     />
                 </div>
 
@@ -165,12 +175,14 @@ function PassengerInfo(props) {
     const [lastName, setLastName] = useState("");
     const [phoneNum, setPhoneNum] = useState("");
     const [email, setEmail] = useState("");
-    const [dateOB, setDateOB] = useState("");
+    const [dateOB, setDateOB] = useState(moment().subtract(18, "years"));
     const [passportNum, setPassportNum] = useState("");
     
     function formatDate(timestamp) {
         return format(new Date(timestamp), 'yyyy-MM-dd');
     }
+
+    function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 
     //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
@@ -220,7 +232,8 @@ function PassengerInfo(props) {
                 }}
                     value={phoneNum}
                     onChange={(event) => setPhoneNum(event.target.value)}
-                
+                    inputProps={{ pattern: '[0-9]*', inputMode: 'numeric', minLength: 10, maxLength: 10 }}
+                    error={isNumber(phoneNum) == false && phoneNum.length!=0}
                 />
 
                 <TextField label="Email" variant="outlined" size="small" sx={{
@@ -241,6 +254,7 @@ function PassengerInfo(props) {
                 }}
                     value={passportNum}
                     onChange={(event) => setPassportNum(event.target.value)}
+                    inputProps={{ pattern: '[0-9]*', inputMode: 'numeric', minLength: 9 }}
                 />
             </div>
 
@@ -250,6 +264,7 @@ function PassengerInfo(props) {
 
                         label="Date of birth"
                         value={dateOB}
+                        //maxDate={new Date(moment().subtract(18, "years"))}
                         onChange={(newDateOB) => {
                             setDateOB(newDateOB);
                         }}

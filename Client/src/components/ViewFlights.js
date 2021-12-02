@@ -78,7 +78,7 @@ export default function ViewFlights() {
                         <FlightTakeoff />{'\t\t\t\t'}Choose Your Flight Back:
                     </Typography >
                     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                        {(state[0].bookingType == 'round') && state[1].map(data => <Flights
+                        {(state[0].bookingType == 'round') && state[2].map(data => <Flights
                             setArrivalFlightData={setArrivalFlightData}
                             arrivalChecked={arrivalChecked}
                             setArrivalChecked = {setArrivalChecked}
@@ -211,8 +211,12 @@ function Flights(props) {
                 <ListItemText id={props.flightNumber[0] + props.flightNumber[1]}
                     primary={`${props.stop == 0 ? 'Direct Flight    -' : 'Connecting flight  -'} 
                     ${props.stop == 0 ? '' : ' 1 Stop -'}  
-                    Total Time:  ${props.elapsedtime[2].hours} 
-                    Hour${props.elapsedtime[2].hours > 1 ? 's' : ''}`} />
+                    Total Time:
+                    ${props.elapsedtime[2].days ? props.elapsedtime[2].days+' Day and ': ''}
+                    ${props.elapsedtime[2].hours ? props.elapsedtime[2].hours : '00'}:${props.elapsedtime[2].minutes ? props.elapsedtime[2].minutes : '00' + ''}
+                    ${props.elapsedtime[2].hours >= 1 ? 'Hours' : ''}
+                    `}
+                />
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <ListItem component="div" >

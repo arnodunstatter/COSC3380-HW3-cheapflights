@@ -12,21 +12,77 @@ import ListItem from '@mui/material/ListItem';
 import Card from '@mui/material/Card';
 import { format } from 'date-fns';
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FlightLand, FlightTakeoff, Send } from "@mui/icons-material";
+
+import { addFlight } from './redux/flightSlice';
+import { useSelector, useDispatch } from "react-redux";
 
 
 export default function ViewFlights() {
     const location = useLocation();
     const state = location.state;
+    console.log(state); 
 
+    const [desChecked, setDesChecked] = React.useState([]);
+    const [arrivalChecked, setArrivalChecked] = React.useState([]);
+    const [desFlightData, setDesFlightData] = useState({
+        departureLoc: "",
+        arrivalLoc: "",
+        arrivalDate: "",
+        departureDate: "",
+        typeFlight: "Direct Flight",
+        price: "500"
+    });
+    const [arrivalFlightData, setArrivalFlightData] = useState({
+        departureLoc: "",
+        arrivalLoc: "",
+        arrivalDate: "",
+        departureDate: "",
+        typeFlight: "Direct Flight",
+        price: "700"
+    });
+    const navigate = useNavigate();
+
+    function sendCheckoutInformation() {
+        let flightNum = [desChecked[0]]
+
+        if (desFlightData.typeFlight == "Connecting Flight")
+            flightNum.push(desChecked[1])
+        
+        if (state[0].bookingType == 'round') {
+            flightNum.push(arrivalChecked[0])
+            if (arrivalFlightData.typeFlight == "Connecting Flight")
+                flightNum.push(desChecked[1])
+        }
+        
+        
+        navigate("/checkout", {
+            state:
+            {
+                numPassenger: state[0].numPassenger,
+                bookingType: state[0].bookingType == 'round' ? "Round Trip" : "One-way",
+                seatClass: state[0].seatClass,
+                flightNums: flightNum, 
+                flightData: { desFlightData, arrivalFlightData }
+            }
+        }
+        
+        );
+    }
+    
     function flightBack() {
         return (
             <div style={{ display: "inline", margin: "20 px"}}>
-                <Box sx={{ bgcolor: 'background.paper' }}>    
-                    < Typography variant="h5" component="h5" align="center">
-                    Choose Your Flight Back:
+                <Box sx={{ bgcolor: 'background.paper' }}>  
+                    < Typography variant="h5" component="h5" align="center">  
+                        <FlightTakeoff />{'\t\t\t\t'}Choose Your Flight Back:
                     </Typography >
                     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                        {(state[0] == 'round') && state[2].map(data => <Flights
+                        {(state[0].bookingType == 'round') && state[1].map(data => <Flights
+                            setArrivalFlightData={setArrivalFlightData}
+                            arrivalChecked={arrivalChecked}
+                            setArrivalChecked = {setArrivalChecked}
+                            direction={"arrival"}
                             flightNumber={[data.flight_no, data.flight_no2]}
                             stop={data.stop}
                             departingTime={[data.departure_time, data.departure_time2]}
@@ -53,10 +109,14 @@ export default function ViewFlights() {
                         sx={{ bgcolor: 'background.paper' }}
                     >
                         <Typography variant="h5" component="h5" align="center">
-                            Choose Flight To Destination:
+                            <FlightLand />{'\t\t\t\t'}Choose Departing Flight:
                         </Typography>
                         <List sx={{ width: '100%',  bgcolor: 'background.paper' }}>
                             {state && state[1].map(data => <Flights
+                                setDesFlightData={setDesFlightData}
+                                desChecked={desChecked}
+                                setDesChecked={setDesChecked}
+                                direction={"destination"}
                                 flightNumber={[data.flight_no, data.flight_no2]}
                                 stop={data.stop}
                                 departingTime={[data.departure_time, data.departure_time2]}
@@ -72,15 +132,13 @@ export default function ViewFlights() {
                         </List>
                     </Box>
                 </div>      
-                {(state[0] == 'round') && flightBack()}
+                {(state[0].bookingType == 'round') && flightBack()}
             </div>
 
             <Link className="flights-btn-container" to="/search-flight">
-                <button className="flights-btn">Back</button>
+                <button className="flights-btn" >Back</button>
             </Link>
-            <Link className="flights-btn-container" to="/checkout">
-                <button className="flights-btn">Checkout</button>
-            </Link>
+            <button className="flights-btn" onClick = {sendCheckoutInformation}>Checkout</button>
         </div>
 
     );
@@ -88,40 +146,66 @@ export default function ViewFlights() {
 
 function Flights(props) {
     const [open, setOpen] = useState(props.stop-1);
-    const [checked, setChecked] = React.useState([0]);
+    const [checked, setChecked] = React.useState([]);
+    const dispatch = useDispatch();
 
     const handleToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
         const newChecked = [...checked];
-
         if (currentIndex === -1) {
             newChecked.push(value);
         } else {
             newChecked.splice(currentIndex, 1);
         }
-
         setChecked(newChecked);
     };
 
     function formatDate(timestamp) {
-        return format(new Date(timestamp), 'MM/dd/yyy HH:mm aaa');
+        return format(new Date(timestamp), 'MM/dd/yyyy HH:mm aaa');
     }
     
     const handleClick = () => {
+        if (open) {
+            let flightNum = [props.flightNumber[0], props.flightNumber[1]];    
+            let flightInfo = {
+                departureLoc: [props.departureCity[0] + ', ' + props.departureAirPortCode[0],
+                props.departureCity[1] + ', ' + props.departureAirPortCode[1]],
+                arrivalLoc: [[props.arrivalCity[0] + ', ' + props.arrivalAirPortCode[0]],
+                [props.arrivalCity[1] + ', ' + props.arrivalAirPortCode[1]]],
+                arrivalDate: [formatDate(props.arrivalTime[0]), formatDate(props.arrivalTime[1])],
+                departureDate: [formatDate(props.departingTime[0]), formatDate(props.arrivalTime[1])],
+                typeFlight: props.stop == 0 ? "Direct Flight" : "Connecting Flight",
+                price: props.stop == 0 ? parseInt(props.price[0]) :  parseInt(props.price[0]) + parseInt(props.price[1])
+            };
+            if (props.direction == "destination") {
+                props.setDesChecked(flightNum)
+                props.setDesFlightData(flightInfo)
+            } else {
+                props.setArrivalChecked(flightNum)
+                props.setArrivalFlightData(flightInfo)
+            }
+        }
         setOpen(!open);
     };
 
-    return (
-        
+    const shouldBeChecked = () => {
+        if (props.direction == "destination") {
+            return (props.desChecked[0] == props.flightNumber[0] && props.desChecked[1] == props.flightNumber[1])
+        } else {
+            return (props.arrivalChecked[0] == props.flightNumber[0] && props.arrivalChecked[1] == props.flightNumber[1])
+        }
+    }
+
+    return (    
         <List disablePadding dense>
             <ListItemButton role={undefined} onClick={handleClick} disablePadding dense>
+                
                 <ListItemIcon>
                     <Checkbox
                         edge="start"
-                        //checked={checked.indexOf(value.val) !== -1}
+                        checked={shouldBeChecked()}
                         tabIndex={-1}
                         disableRipple
-                    //inputProps={{ 'aria-labelledby': labelId }}
                     />
                 </ListItemIcon>
                 <ListItemText id={props.flightNumber[0] + props.flightNumber[1]}
@@ -144,8 +228,8 @@ function Flights(props) {
                                         Departure Time: {formatDate(props.departingTime[value]) + '\t\t'}
                                         Arrival Time: {formatDate(props.arrivalTime[value])} </pre>
                                     <pre>
-                                        Departure Location: {props.departureCity[value] + ', ' + props.departureAirPortCode[value] + '\t\t'}
-                                        Arrival Location: {props.arrivalCity[value] + ', ' + props.arrivalAirPortCode[value]} </pre>
+                                        Departure Location: {props.departureCity[value] + ' (' + props.departureAirPortCode[value] + ')\t\t'}
+                                        Arrival Location: {props.arrivalCity[value] + ' (' + props.arrivalAirPortCode[value] +')'}</pre>
                                     <pre>
                                         Price: ${props.price[value] + '                    '}</pre>
                                 </Card>
@@ -154,6 +238,6 @@ function Flights(props) {
                     </div>
                 </ListItem>
             </Collapse>
-            </List>
+        </List>
     );
 }

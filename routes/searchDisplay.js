@@ -48,7 +48,7 @@ module.exports = app => {
             let available_seats = (seat_class == 'business') ? 'available_bussiness_seats' : 'available_economy_seats';
             try {
                 var flightInfo = await client.query(
-                    `SELECT f.flight_no, f.departure_time, f.arrival_time, f.${price} AS price,
+                `SELECT f.flight_no, f.departure_time, f.arrival_time, f.${price} AS price,
                 f.${available_seats} AS available_seats,
                 AGE( f.arrival_time, f.departure_time) as elapsedTime, 0 as stop,
                 d.city_name as departureCity, f.departure_airport_code as departureAirPortCode,
@@ -117,6 +117,8 @@ module.exports = app => {
 };
 
 
+
+// for test 
 
 
 `SELECT f.flight_no, f.departure_time, f.arrival_time, f.econ_price AS price,

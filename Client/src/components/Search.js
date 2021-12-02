@@ -8,23 +8,31 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FlightLand, FlightTakeoff, Send } from "@mui/icons-material";
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+
+import { setPassengerNum } from './redux/flightSlice'
 
 
 function Search() {
     const today = new Date();
     const [departureDate, setDepartureDate] = useState(today);
     const [arrivalDate, setArrivalDate] = useState(departureDate);
-    const [departureCity, setDepartureCity] = useState("Houston");
-    const [arrivalCity, setArrivalCity] = useState("Seattle");
+    const [departureCity, setDepartureCity] = useState("");
+    const [arrivalCity, setArrivalCity] = useState("");
     const [seatClass, setSeatClass] = useState('economy')
     const [loading, setLoading] = useState(false);
     const [style, setStyle] = useState("active");
     const [bookingType, setBookingType] = useState("round");
     const [numPassenger, setNumPassenger] = useState(1);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const location = useLocation();
+    
+    const cities = location.state;
+    console.log(cities);
 
-    const [cityList, setCityList] = useState(["Houston", "Dallas", "Russia", "Seattle"]);
+    const [cityList, setCityList] = useState(cities);
 
     const checkArrivalDate = (newDate) => {
         if (newDate < departureDate) {
@@ -77,6 +85,8 @@ function Search() {
 
         let departure_date = departureDate.getFullYear() + '-' + (departureDate.getMonth() + 1) + '-' + departureDate.getDate();
         let arrival_date = arrivalDate.getFullYear() + '-' + (arrivalDate.getMonth() + 1) + '-' + arrivalDate.getDate();
+        
+        dispatch(setPassengerNum(numPassenger));
 
         try {
             const body = { departure_date, departureCity, arrivalCity, numPassenger, seatClass };
@@ -94,9 +104,9 @@ function Search() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(body2)
                 });
-                navigate("/search-flight/flights", { state: [bookingType, await response.json(), await response2.json() ] });
+                navigate("/search-flight/flights", { state: [{ numPassenger, bookingType, seatClass }, await response.json(), await response2.json() ] });
             } else {
-                navigate("/search-flight/flights", { state: [bookingType, await response.json()] });
+                navigate("/search-flight/flights", { state: [{ numPassenger, bookingType, seatClass }, await response.json()] });
             }
         } catch (error) {
             console.log(error);

@@ -1,79 +1,68 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import './CSS/Checkout.css';
-
 import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import { format } from 'date-fns';
+
+
+
 
 function Checkout() {
-    const [value, setValue] = useState(null);
+    const [passengers, setPassengers] = useState([]);
+    const [cardNum, setCardNum] = useState("");
+    const [discountCode, setDiscountCode] = useState("");
+    const [completedBooking, setCompletedBooking] = useState(false); 
+    const location = useLocation();
+
+    const state = location.state;
+    
+    const completeBooking = async () => {  
+        setCompletedBooking(true);
+        try { 
+            const body = {
+                flight_nos: state.flightNums ,
+                economySeats: state.seatClass == "economy" ? parseInt(state.numPassenger): 0,
+                businessSeats: state.seatClass == "business" ? parseInt(state.numPassenger) : 0,
+                discount_code: discountCode? discountCode : "none",
+                card_no: cardNum,
+                passengersInfo: passengers
+            };
+            console.log(body);
+            /*
+            const response = await fetch("http://localhost:5000/search-flight/flights", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+                navigate("/search-flight/flights", { state: [{ numPassenger, bookingType, seatClass }, await response.json()] });
+            }
+            */
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    let totalPrice = state.bookingType == "Round Trip" ?
+        state.flightData.desFlightData.price + state.flightData.arrivalFlightData.price
+        : state.flightData.desFlightData.price; 
 
     return(
         <div className='checkout-container'>
             <div className='checkout-confirmation-container'>
-                <div className='checkout-confirmation'>
-
-                    <p className='checkout-form-h1'>Who's traveling?</p>
-                    <p className='checkout-form-h4'>Traveler names must match government-issued photo ID exactly.</p>
-
-                    <div className='checkout-form-name'>
-                            <TextField label="First name" variant="outlined" size="small" sx={{ 
-                                width: 200,
-                                height: 5,
-                                my: 2,
-                                mr: 2
-                            }} />
-
-                            <TextField label="Last name" variant="outlined" size="small" sx={{ 
-                                width: 200,
-                                height: 5,
-                                my: 2
-                            }} />
-                    </div>
-
-
-                    <div className='checkout-form-name'>
-                            <TextField label="Phone number" variant="outlined" size="small" sx={{ 
-                                width: 200,
-                                height: 5,
-                                my: 2,
-                                mr: 2
-                            }} />
-
-                            <TextField label="Email" variant="outlined" size="small" sx={{ 
-                                width: 200,
-                                height: 5,
-                                my: 2
-                            }} />
-                    </div>
-
-                    <div className='checkout-form-section'>
-                        <TextField label="Passport number" variant="outlined" size="small" sx={{ 
-                            width: 300,
-                            height: 5,
-                            my: 2
-                        }} />
-                    </div>
-
-                    <div className='checkout-dob'>
-                        <LocalizationProvider  dateAdapter={AdapterDateFns}>
-                            <DatePicker
-                                
-                                label="Date of birth"
-                                value={value}
-                                onChange={(newValue) => {
-                                setValue(newValue);
-                                }}
-                                renderInput={(params) => <TextField size="small" sx={{ 
-                                    width: 150,
-                                    height: 10,
-                                }} 
-                                {...params} />} />
-                        </LocalizationProvider>
-                    </div>
-                </div>
+                {state && [...Array(state.numPassenger).keys()].map((val) =>
+                    <PassengerInfo
+                        val={val}
+                        completedBooking={completedBooking}
+                        passengers={passengers}
+                        setPassengers={setPassengers}
+                        seatClass={state.seatClass}
+                    />
+                )}
 
                 <div className='checkout-payment'>
                     <p className='checkout-form-h1'><i class="fas fa-lock"></i> How would you like to pay?</p>
@@ -81,7 +70,18 @@ function Checkout() {
                         width: 300,
                         height: 5,
                         my: 4
-                        }} />                          
+                    }}
+                        value={cardNum}
+                        onChange={(event) => setCardNum(event.target.value)}         
+                    />
+                    <TextField label="Discount Code" variant="outlined" size="small" sx={{
+                        width: 300,
+                        height: 5,
+                        my: 4
+                    }}
+                        value={discountCode}
+                        onChange={(event) => setDiscountCode(event.target.value)}
+                    />
                 </div>
 
                 <div className='checkout-review'>
@@ -103,9 +103,9 @@ function Checkout() {
                         <p className='checkout-form-h4'>By clicking on the button below, I acknowledge that I have reviewed the Privacy Statement. and Government Travel Advice. and have reviewed and accept the above Rules & Restrictions and Terms of Use.</p>
                     </div>
 
-                    <Link className='checkout-btn-container' to='/'>
-                        <button className='search-btn'>Complete Booking</button>
-                    </Link>
+                    <div className='checkout-btn-container' >
+                        <button className='search-btn' onClick={completeBooking}>Complete Booking</button>
+                    </div>
 
                     <div className='checkout-form-section'>
                         <p className='checkout-form-h4'><i class="fas fa-lock"></i> We use secure transmission and encrypted storage to protect your personal information.</p>
@@ -121,32 +121,33 @@ function Checkout() {
 
             <div className='checkout-form'>
                 <p className='checkout-form-h1'>Flight summary</p>
-                <p className='checkout-form-h4'>One-way</p>
+                <p className='checkout-form-h4'>{state.bookingType}</p>
 
-                <p className='checkout-form-h2'>Houston (IAH) to Los Angeles (LAX)</p>
-                <p className='checkout-form-h3'>Sat, Dec 11</p>
-                <p className='checkout-form-h4'>7:15am - 8:58am (3h 43m)</p>
-                <p className='checkout-form-h4'>Spirit Airlines 590</p>
-
+                <p className='checkout-form-h2'>{state.flightData.desFlightData.departureLoc[0]} to {
+                    (state.flightData.arrivalFlightData.typeFlight == "Direct Flight") ?
+                        state.flightData.arrivalFlightData.arrivalLoc[0] : state.flightData.arrivalFlightData.arrivalLoc[1]}</p>
+                <p className='checkout-form-h3'>{state.flightData.desFlightData.departureDate[0]}</p>
+                
+                <p className='checkout-form-h4'>CheapFlights Airlines {state.flightNums[0]}</p>
                 <div className='checkout-price-summary'>
                     <p className='checkout-form-h1'>Price summary</p>
 
                     <div className='checkout-price'>
-                        <p className='checkout-form-h4'>Traveler:</p>
-                        <p className='checkout-form-h4'>1</p>
+                        <p className='checkout-form-h4'>Traveler(s):</p>
+                        <p className='checkout-form-h4'>{ state.numPassenger}</p>
                     </div>
                     <div className='checkout-price'>
                         <p className='checkout-form-h4'>Flight:</p>
-                        <p className='checkout-form-h4'>$16.66</p>
+                        <p className='checkout-form-h4'>${totalPrice}</p>
                     </div>
                     <div className='checkout-price'>
                         <p className='checkout-form-h4'>Taxes & Fees:</p>
-                        <p className='checkout-form-h4'>$116.88</p>
+                        <p className='checkout-form-h4'>${totalPrice * (0.0825)}</p>
                     </div>
 
                     <div className='checkout-price-total'>
                         <p className='checkout-form-h4'>Total:</p>
-                        <p className='checkout-form-h4'>$133.54</p>
+                        <p className='checkout-form-h4'>${totalPrice * (1.0825)}</p>
                     </div>
 
                     <p className='checkout-form-info'>All prices quoted in <span>US dollars</span>.</p>
@@ -157,3 +158,108 @@ function Checkout() {
 }
 
 export default Checkout;
+
+
+function PassengerInfo(props) {
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [phoneNum, setPhoneNum] = useState("");
+    const [email, setEmail] = useState("");
+    const [dateOB, setDateOB] = useState("");
+    const [passportNum, setPassportNum] = useState("");
+    
+    function formatDate(timestamp) {
+        return format(new Date(timestamp), 'yyyy-MM-dd');
+    }
+
+
+    //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
+    useEffect(() => {
+        console.log("hello");
+        console.log(props.completedBooking)
+        if (props.completedBooking) {
+            let newPassengers = [...props.passengers, [passportNum, firstName, lastName, email, phoneNum, formatDate(dateOB), props.seatClass]];
+            props.setPassengers(newPassengers)
+        }
+        
+    }, [props.completedBooking]);
+
+    return (
+        <div className='checkout-confirmation'>
+            <p className='checkout-form-h1'>Passenger {props.val + 1}</p>
+            <p className='checkout-form-h4'>Traveler names must match government-issued photo ID exactly.</p>
+
+            <div className='checkout-form-name'>
+                <TextField label="First name" variant="outlined" size="small" sx={{
+                    width: 200,
+                    height: 5,
+                    my: 2,
+                    mr: 2
+                }}
+                    value={firstName}
+                    onChange={(event) => { setFirstName(event.target.value) }}
+                />
+
+                <TextField label="Last name" variant="outlined" size="small" sx={{
+                    width: 200,
+                    height: 5,
+                    my: 2
+                }}
+                    value={lastName}
+                    onChange={(event) => setLastName(event.target.value)}
+                />
+            </div>
+
+
+            <div className='checkout-form-name'>
+                <TextField label="Phone number" variant="outlined" size="small" sx={{
+                    width: 200,
+                    height: 5,
+                    my: 2,
+                    mr: 2
+                }}
+                    value={phoneNum}
+                    onChange={(event) => setPhoneNum(event.target.value)}
+                
+                />
+
+                <TextField label="Email" variant="outlined" size="small" sx={{
+                    width: 200,
+                    height: 5,
+                    my: 2
+                }}
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                />
+            </div>
+
+            <div className='checkout-form-section'>
+                <TextField label="Passport number" variant="outlined" size="small" sx={{
+                    width: 300,
+                    height: 5,
+                    my: 2
+                }}
+                    value={passportNum}
+                    onChange={(event) => setPassportNum(event.target.value)}
+                />
+            </div>
+
+            <div className='checkout-dob'>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+
+                        label="Date of birth"
+                        value={dateOB}
+                        onChange={(newDateOB) => {
+                            setDateOB(newDateOB);
+                        }}
+                        renderInput={(params) => <TextField size="small" sx={{
+                            width: 150,
+                            height: 10,
+                        }}
+                            {...params} />} />
+                </LocalizationProvider>
+            </div>
+        </div>
+    )
+}

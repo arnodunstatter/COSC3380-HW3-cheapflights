@@ -57,7 +57,7 @@ WHERE ticket_no = ${ticket_no};`);
 
                 res.json(boarding_pass_query.rows);
 
-                await client.query("COMMIT;");
+
 
             } catch (e) {
                 

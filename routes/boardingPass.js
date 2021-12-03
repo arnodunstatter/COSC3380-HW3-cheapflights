@@ -35,16 +35,12 @@ module.exports = app => {
         //**generate boarding_pass */
         async function getBoardingPass(client, ticket_no) {
 
-            const str = 'getBoardingPass(client,ticket_no)';
-            const file = 'query.sql';
 
             try {
 
-
-
                 async function clientQueryAndWriteToQuerySQL(client, transactionStr)
                 {
-                    fs.appendFileSync("query.sql", transactionStr+`\r\r--The following sql statements are part of the query for for ${str}\r`, function (err) {
+                    fs.appendFileSync("query.sql", transactionStr+`\r\r--The following sql statements are part of the query for for getBoardingPass(client,${ticket_no})\r`, function (err) {
                         console.log(err);
                     });
                     return await client.query(transactionStr);

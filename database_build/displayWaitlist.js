@@ -39,8 +39,10 @@ async function displayWaitList(client, ticket_no) {
         });
         return await client.query(transactionStr);
     }
-    
-    var query = await clientQueryAndWriteToQuerySQL(client,`\r\r
+    fs.appendFileSync("query.sql", `\r\r--The following sql statements are part of the query for displayWaitList(client, ${ticket_no})\r`, function (err) {
+        console.log(err);
+    });
+    var query = await clientQueryAndWriteToQuerySQL(client,`
 SELECT book_ref, ticket_no, passport_no, flight_no 
 FROM passengers LEFT JOIN tickets USING(passport_no) 
 WHERE ticket_no = ${ticket_no}`)
@@ -48,14 +50,14 @@ WHERE ticket_no = ${ticket_no}`)
     console.log(query.rows)
 
 
-    var economy_waitlist_query = await clientQueryAndWriteToQuerySQL(client,`\r\r
+    var economy_waitlist_query = await clientQueryAndWriteToQuerySQL(client,`
 SELECT * 
 FROM economy_waitlist 
 WHERE flight_no = ${flight_no};`);
     var economy_waitlist = economy_waitlist_query.rows;
     console.log(economy_waitlist);
 
-    var business_waitlist_query = await clientQueryAndWriteToQuerySQL(client,`\r\r
+    var business_waitlist_query = await clientQueryAndWriteToQuerySQL(client,`
 SELECT * 
 FROM business_waitlist 
 WHERE flight_no = ${flight_no};`);

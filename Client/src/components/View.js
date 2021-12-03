@@ -39,10 +39,11 @@ function View() {
         try {
             const body = { ticket_no };
 
-            if (waitlist === 0) {
-                alert('You are put on a waitlist.');
-            } else {
+            if (waitlist === '0') {
+                
                 alert('Switch classes successful.');
+            } else {
+                alert('You are put on a waitlist.');
             }
 
             await fetch("http://localhost:5000/waitlist", {

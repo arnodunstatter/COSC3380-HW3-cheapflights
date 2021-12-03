@@ -57,6 +57,12 @@ function Checkout() {
 
     const completeBooking = async () => {
         setCompletedBooking(true);
+        console.log(passengers.length , state.numPassenger)
+        if (passengers.length != state.numPassenger) {
+            alert("Please reconfirm all passenger information!");
+            setPassengers([]);
+            return; 
+        }
         try {
             const body = {
                 flight_nos: state.flightNums,
@@ -72,8 +78,11 @@ function Checkout() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             }).then((value) => {
+                console.log("Successful Transaction!")
+                alert("Successful Transaction!");
                 //navigate("/search-flight/flights", { state: value });
             }, reason => {
+                alert("Unsuccessful Transaction :'( ", reason);
                 console.error(reason); // Error!
             }
             );
@@ -218,15 +227,11 @@ function PassengerInfo(props) {
     function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
 
-    //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
-    useEffect(() => {
-        console.log("trigger: ", props.completedBooking);
-        console.log("array", props.passengers);
-
+    function transferData() {
         let newPassengers = [...props.passengers, [passportNum, firstName, lastName, email, phoneNum, formatDate(dateOB), props.seatClass]];
         props.setPassengers(newPassengers)
-
-    }, [props.completedBooking]);
+    }
+    //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
 
     return (
         <div className='checkout-confirmation'>
@@ -306,7 +311,13 @@ function PassengerInfo(props) {
                         }}
                             {...params} />} />
                 </LocalizationProvider>
+                
+                <button className='search-btn' onClick={transferData}>Confirmas</button>
             </div>
+
+            
+           
+          
         </div>
     )
 }

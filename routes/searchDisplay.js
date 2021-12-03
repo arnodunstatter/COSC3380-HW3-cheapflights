@@ -46,7 +46,7 @@ module.exports = app => {
             //seat field name 
             // econ_price or bus_price 
             let price = (seat_class == 'business') ? 'bus_price' : 'econ_price';
-            let available_seats = (seat_class == 'business') ? 'available_bussiness_seats' : 'available_economy_seats';
+            let available_seats = (seat_class == 'business') ? 'available_business_seats' : 'available_economy_seats';
             try {
                 searchFlightQuery = `SELECT f.flight_no, f.departure_time, f.arrival_time, f.${price} AS price,
                 f.${available_seats} AS available_seats,

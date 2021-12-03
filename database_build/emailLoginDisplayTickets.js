@@ -47,8 +47,13 @@ async function loginDisplayTickets(client, email_address) {
             });
             return await client.query(transactionStr);
         }
+
+        var identifier = `loginDisplayTickets(client, ${email_address})\r`;
+        fs.appendFileSync("query.sql", `\r\r--The following sql statements are part of the query for ${identifier}`, function (err) {
+            console.log(err);
+        });
         var display_tickets = await clientQueryAndWriteToQuerySQL(client,
-`\r\rSELECT t.ticket_no, f.flight_no, plane.aircraft_code, plane.aircraft_name, p.passport_no, dep.airport_code AS departure_airport_code, dep.airport_name AS departure_airport_name, f.departure_time,
+`SELECT t.ticket_no, f.flight_no, plane.aircraft_code, plane.aircraft_name, p.passport_no, dep.airport_code AS departure_airport_code, dep.airport_name AS departure_airport_name, f.departure_time,
             dep.city_name AS departing_city, dep.country AS departing_country, arr.airport_code AS arrival_airport_code, arr.airport_name AS arrival_airport_name, f.arrival_time, arr.city_name AS arrival_city,
             arr.country AS arrival_country, t.seat_class, b.book_ref, b.total_amount
 FROM tickets AS t
@@ -61,10 +66,8 @@ LEFT JOIN aircraft AS plane USING(aircraft_code)
 WHERE email_address = '${email_address}';`);
 
         console.log(display_tickets.rows);
-
-
-
     } catch (e) {
+
         throw (e); //will bypass the "Ending Correctly" throw
     }
 }

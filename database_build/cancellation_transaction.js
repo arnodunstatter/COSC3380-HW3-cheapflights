@@ -47,7 +47,7 @@ async function cancelBooking(client, book_ref) {
     }
     try {
         //start our transaction
-        fs.appendFileSync("transaction.sql", `\r\r--Begin transaction for cancelBooking(client,${book_ref})\r`, function (err) {
+        fs.appendFileSync("transaction.sql", `\r\r--The following sql statements are part of the transaction for cancelBooking(client,${book_ref})\r`, function (err) {
             console.log(err);
         });
         await clientQueryAndWriteToTransactionSQL(client, "BEGIN;");

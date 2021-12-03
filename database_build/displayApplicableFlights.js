@@ -43,10 +43,12 @@ async function findFlights(client, departure_date, departure_city, arrival_city)
         return await client.query(transactionStr);
     }
 
-
+    fs.appendFileSync("query.sql", `\r\r--The following sql statements are part of the query for findFlights(client, ${departure_date}, ${departure_city}, ${arrival_city})\r`, function (err) {
+        console.log(err);
+    });
     //get departureAirportCode 
     var departureAirportCode = await clientQueryAndWriteToQuerySQL(client,
-`\r\rSELECT airport_code
+`SELECT airport_code
 FROM airport_cities
 WHERE city_name = '${departure_city}';`
     );
@@ -54,7 +56,7 @@ WHERE city_name = '${departure_city}';`
     departureAirportCode = departureAirportCode.rows[0]["airport_code"];
     //get arrivalAirportCode
     var arrivalAirportCode = await clientQueryAndWriteToQuerySQL(client,
-`\r\rSELECT airport_code
+`SELECT airport_code
 FROM airport_cities
 WHERE city_name = '${arrival_city}';`
     );
@@ -62,7 +64,7 @@ WHERE city_name = '${arrival_city}';`
     arrivalAirportCode = arrivalAirportCode.rows[0]["airport_code"];
 
     var directFlights = await clientQueryAndWriteToQuerySQL(client,
-`\r\rSELECT flight_no
+`SELECT flight_no
 FROM flights
 WHERE departure_airport_code = '${departureAirportCode}' 
     AND arrival_airport_code = '${arrivalAirportCode}' 
@@ -80,7 +82,7 @@ WHERE departure_airport_code = '${departureAirportCode}'
 
 
     var connectingFlights = await clientQueryAndWriteToQuerySQL(client,
-`\r\rSELECT f1.flight_no AS flight_no_1, f2.flight_no AS flight_no_2
+`SELECT f1.flight_no AS flight_no_1, f2.flight_no AS flight_no_2
 FROM flights AS f1
 JOIN flights AS f2
     ON f1.arrival_airport_code = f2.departure_airport_code

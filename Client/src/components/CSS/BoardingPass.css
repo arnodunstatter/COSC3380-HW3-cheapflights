@@ -1,0 +1,66 @@
+.pass-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 300px;
+    width: 750px;
+    background-color: white;
+    box-shadow: 0 0 10px #d9d9d9;
+    border-radius: 20px;
+    font-size: 1rem;
+    padding: 20px;
+    margin-top: 100px;
+    animation: fade 0.2s ease;
+    
+}
+
+/*boarding pass details*/
+.view-form-h0 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+/*end of section*/
+
+/*square*/
+.pass-row {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+
+.pass-square {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    width: 80px;
+    border-style: solid;
+    border-width: thin;
+    border-color: black;
+    border-radius: 20px;
+    margin: 0 5px;
+}
+/*end of section*/
+
+/*flight info*/
+.pass-flight-info {
+    margin-top: 69px;
+}
+/*end of section*/
+
+/*barcode*/
+.pass-barcode {
+    display: flex;
+    justify-self: center;
+    align-self: center;
+}
+
+.pass-barcode-img {
+    height: 200px;
+    width: 200px;
+}
+/*end of section*/

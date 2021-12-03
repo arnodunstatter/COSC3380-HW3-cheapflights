@@ -6,6 +6,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import ViewFlights from './ViewFlights';
 import Checkout from './Checkout';
 import Checkin from './Checkin';
+import BoardingPass from './BoardingPass';
 
 import './CSS/App.css';
 
@@ -36,6 +37,7 @@ function App() {
               <Route path='/view-flight' element={<View />} />
               <Route path ='/checkout' element={<Checkout />} />
               <Route path ='/checkin' element={<Checkin />} />
+              <Route path ='/boardingpass' element={<BoardingPass />} />
             </Routes>
           </section>
         </div>

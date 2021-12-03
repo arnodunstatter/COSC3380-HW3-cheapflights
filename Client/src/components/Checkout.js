@@ -22,6 +22,7 @@ function Checkout() {
     const [completedBooking, setCompletedBooking] = useState(false);
     const location = useLocation();
     const state = location.state;
+    const navigate = useNavigate();
 
     const [confirm, setConfirm] = useState(false);
     const [bookingResponse, setBookingResponse] = useState(""); 
@@ -73,14 +74,14 @@ function Checkout() {
                 passengersInfo: passengers
             };
             console.log(body);
-            const response = await fetch("http://localhost:5000/checkout-Confirmation", {
+            const response = await fetch("http://localhost:5000/checkout-confirmation", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             }).then((value) => {
                 console.log("Successful Transaction!")
                 alert("Successful Transaction!");
-                //navigate("/search-flight/flights", { state: value });
+                navigate("/");
             }, reason => {
                 alert("Unsuccessful Transaction :'( ", reason);
                 console.error(reason); // Error!
@@ -230,6 +231,8 @@ function PassengerInfo(props) {
     function transferData() {
         let newPassengers = [...props.passengers, [passportNum, firstName, lastName, email, phoneNum, formatDate(dateOB), props.seatClass]];
         props.setPassengers(newPassengers)
+
+        alert('Passenger confirmed');
     }
     //[passport_no, first_name, last_name, email_address, phone_no, dob, seatClass]
 
@@ -312,7 +315,7 @@ function PassengerInfo(props) {
                             {...params} />} />
                 </LocalizationProvider>
                 
-                <button className='search-btn' onClick={transferData}>Confirmas</button>
+                <button className='search-btn-main' onClick={transferData}>Confirm</button>
             </div>
 
             

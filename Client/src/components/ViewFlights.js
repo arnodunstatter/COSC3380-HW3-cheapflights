@@ -73,16 +73,45 @@ export default function ViewFlights() {
     function flightBack() {
         return (
             <div style={{ display: "inline", margin: "20 px"}}>
-                <Box sx={{ bgcolor: 'background.paper' }}>  
-                    < Typography variant="h5" component="h5" align="center">  
-                        <FlightTakeoff />{'\t\t\t\t'}Choose Your Flight Back:
-                    </Typography >
-                    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                        {(state[0].bookingType == 'round') && state[2].map(data => <Flights
-                            setArrivalFlightData={setArrivalFlightData}
-                            arrivalChecked={arrivalChecked}
-                            setArrivalChecked = {setArrivalChecked}
-                            direction={"arrival"}
+                <Typography variant="h5" component="h5" align="center">  
+                    <FlightTakeoff />{'\t\t\t\t'}Choose Your Flight Back:
+                </Typography>
+                <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                    {(state[0].bookingType == 'round') && state[2].map(data => <Flights
+                        setArrivalFlightData={setArrivalFlightData}
+                        arrivalChecked={arrivalChecked}
+                        setArrivalChecked = {setArrivalChecked}
+                        direction={"arrival"}
+                        flightNumber={[data.flight_no, data.flight_no2]}
+                        stop={data.stop}
+                        departingTime={[data.departure_time, data.departure_time2]}
+                        arrivalTime={[data.arrival_time, data.arrival_time2]}
+                        price={[data.price, data.price2]}
+                        available_seats={[data.available_seats, data.available_seats2]}
+                        elapsedtime={[data.elapsedtime, data.elapsedtime2, data.totalelapsedtime]}
+                        departureCity={[data.departurecity, data.departurecity2]}
+                        arrivalCity={[data.arrivalcity, data.arrivalcity2]}
+                        departureAirPortCode={[data.departureairportcode, data.departureairportcode2]}
+                        arrivalAirPortCode={[data.arrivalairportcode, data.arrivalairportcode2]}
+                    />)}
+                </List>
+            </div>
+        );
+    }
+
+    return (
+        <div className='flights-parent-container'>
+            <div className='flights-container'>    
+                <div style={{ margin: "auto", display: "inline" }}>
+                    <Typography variant="h5" component="h5" align="center">
+                        <FlightLand />{'\t\t\t\t'}Choose Departing Flight:
+                    </Typography>
+                    <List>
+                        {state && state[1].map(data => <Flights
+                            setDesFlightData={setDesFlightData}
+                            desChecked={desChecked}
+                            setDesChecked={setDesChecked}
+                            direction={"destination"}
                             flightNumber={[data.flight_no, data.flight_no2]}
                             stop={data.stop}
                             departingTime={[data.departure_time, data.departure_time2]}
@@ -96,48 +125,9 @@ export default function ViewFlights() {
                             arrivalAirPortCode={[data.arrivalairportcode, data.arrivalairportcode2]}
                         />)}
                     </List>
-                </Box>
-            </div>
-        );
-    }
-
-    return (
-        <div>
-            <div>    
-                <div style={{ margin: "auto", display: "inline" }}>
-                    <Box
-                        sx={{ bgcolor: 'background.paper' }}
-                    >
-                        <Typography variant="h5" component="h5" align="center">
-                            <FlightLand />{'\t\t\t\t'}Choose Departing Flight:
-                        </Typography>
-                        <List sx={{ width: '100%',  bgcolor: 'background.paper' }}>
-                            {state && state[1].map(data => <Flights
-                                setDesFlightData={setDesFlightData}
-                                desChecked={desChecked}
-                                setDesChecked={setDesChecked}
-                                direction={"destination"}
-                                flightNumber={[data.flight_no, data.flight_no2]}
-                                stop={data.stop}
-                                departingTime={[data.departure_time, data.departure_time2]}
-                                arrivalTime={[data.arrival_time, data.arrival_time2]}
-                                price={[data.price, data.price2]}
-                                available_seats={[data.available_seats, data.available_seats2]}
-                                elapsedtime={[data.elapsedtime, data.elapsedtime2, data.totalelapsedtime]}
-                                departureCity={[data.departurecity, data.departurecity2]}
-                                arrivalCity={[data.arrivalcity, data.arrivalcity2]}
-                                departureAirPortCode={[data.departureairportcode, data.departureairportcode2]}
-                                arrivalAirPortCode={[data.arrivalairportcode, data.arrivalairportcode2]}
-                            />)}
-                        </List>
-                    </Box>
                 </div>      
-                {(state[0].bookingType == 'round') && flightBack()}
+                {(state[0].bookingType === 'round') && flightBack()}
             </div>
-
-            <Link className="flights-btn-container" to="/search-flight">
-                <button className="flights-btn" >Back</button>
-            </Link>
             <button className="flights-btn" onClick = {sendCheckoutInformation}>Checkout</button>
         </div>
 
@@ -174,10 +164,10 @@ function Flights(props) {
                 [props.arrivalCity[1] + ', ' + props.arrivalAirPortCode[1]]],
                 arrivalDate: [formatDate(props.arrivalTime[0]), formatDate(props.arrivalTime[1])],
                 departureDate: [formatDate(props.departingTime[0]), formatDate(props.arrivalTime[1])],
-                typeFlight: props.stop == 0 ? "Direct Flight" : "Connecting Flight",
-                price: props.stop == 0 ? parseInt(props.price[0]) :  parseInt(props.price[0]) + parseInt(props.price[1])
+                typeFlight: props.stop === 0 ? "Direct Flight" : "Connecting Flight",
+                price: props.stop === 0 ? parseInt(props.price[0]) :  parseInt(props.price[0]) + parseInt(props.price[1])
             };
-            if (props.direction == "destination") {
+            if (props.direction === "destination") {
                 props.setDesChecked(flightNum)
                 props.setDesFlightData(flightInfo)
             } else {
@@ -189,10 +179,10 @@ function Flights(props) {
     };
 
     const shouldBeChecked = () => {
-        if (props.direction == "destination") {
-            return (props.desChecked[0] == props.flightNumber[0] && props.desChecked[1] == props.flightNumber[1])
+        if (props.direction === "destination") {
+            return (props.desChecked[0] === props.flightNumber[0] && props.desChecked[1] == props.flightNumber[1])
         } else {
-            return (props.arrivalChecked[0] == props.flightNumber[0] && props.arrivalChecked[1] == props.flightNumber[1])
+            return (props.arrivalChecked[0] === props.flightNumber[0] && props.arrivalChecked[1] == props.flightNumber[1])
         }
     }
 
@@ -210,7 +200,7 @@ function Flights(props) {
                 </ListItemIcon>
                 <ListItemText id={props.flightNumber[0] + props.flightNumber[1]}
                     primary={`${props.stop == 0 ? 'Direct Flight    -' : 'Connecting flight  -'} 
-                    ${props.stop == 0 ? '' : ' 1 Stop -'}  
+                    ${props.stop === 0 ? '' : ' 1 Stop -'}  
                     Total Time:
                     ${props.elapsedtime[2].days ? props.elapsedtime[2].days+' Day and ': ''}
                     ${props.elapsedtime[2].hours ? props.elapsedtime[2].hours : '00'}:${props.elapsedtime[2].minutes ? props.elapsedtime[2].minutes : '00' + ''}
@@ -220,11 +210,11 @@ function Flights(props) {
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <ListItem component="div" >
-                    <div style={{ padding: '10px' , margin: '10px'}}>
+                    <div>
                         {[...Array(props.stop + 1).keys()].map((value) => (
 
                             <ListItem key={props.flightNumber[value]}>
-                                <Card style={{ padding: '0px 30px 0px', margin: '10px', marginTop: '0px' }}>
+                                <Card>
                                     <pre>
                                         Flight number: {props.flightNumber[value] + '\t\t\t\t'}
                                         Available Seats: {props.available_seats[value]} </pre>

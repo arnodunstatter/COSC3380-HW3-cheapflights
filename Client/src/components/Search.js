@@ -28,7 +28,7 @@ function Search() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const location = useLocation();
-
+    
     const cities = location.state;
     console.log(cities);
 
@@ -58,6 +58,27 @@ function Search() {
             },
         },
     });
+
+    // fetch the city list
+    /*
+    useEffect(() => {
+        /*
+        try {
+            const body = { departureDate, departureCity, arrivalCity, numPassenger, seatClass };
+            const response = await fetch("http://localhost:5000/search-flight/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            console.log(await response.json());
+            //state: await response.json();
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }, [])
+*/
+
 
     const search = async() => {
         setLoading(true);

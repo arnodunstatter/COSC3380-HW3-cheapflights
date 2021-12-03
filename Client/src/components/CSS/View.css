@@ -110,6 +110,7 @@
     height:100%;
     width:100%;
     animation: fade 0.2s ease;
+    z-index: 100;
 }
 
 .tickets-prompt {

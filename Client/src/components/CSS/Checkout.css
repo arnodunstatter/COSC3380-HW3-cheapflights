@@ -8,13 +8,32 @@
 /*User's personal info*/
 .checkout-confirmation {
     width: 500px;
-    height: 310px;
+    height: 350px;
     box-shadow: 0 0 10px #d9d9d9;
     background-color: white;
     padding: 20px 30px;
     border-radius: 20px;
     margin-right: 20px;
     margin-top: 20px;
+}
+
+.search-btn-main {
+    margin-top: 70px;
+    width: 150px;
+    align-self: center;
+    border-style: none;
+    padding: 15px;
+    color: white;
+    background-color: #C60039;
+    border-radius: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.search-btn-main:hover {
+    background-color: #d61c51;
+    cursor: pointer;
 }
 
 .checkout-form-name {

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { format } from 'date-fns';
+import React, { useState, useEffect } from 'react';
+import { format, set } from 'date-fns';
 import './CSS/View.css';
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FlagSharp } from '@mui/icons-material';
 
 function View() {
     const location = useLocation();
@@ -10,7 +11,13 @@ function View() {
     const navigate = useNavigate();
 
     const [show, setShow] = useState(false);
+    const [flag, setFlag] = useState(false);
     const [bookref, setBookref] = useState('');
+
+    const [waitlist, setWait] = useState();
+    const [ticket, setTicket] = useState();
+
+    const [stat, setStat] = useState('');
 
     const onSubmitForm = async() => {
         try {
@@ -21,6 +28,47 @@ function View() {
                 body: JSON.stringify(body)
             });
 
+            setStat('Canceled');
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const setWaitlist = async(ticket_no) => {
+        try {
+            const body = { ticket_no };
+
+            if (waitlist === 0) {
+                alert('You are put on a waitlist.');
+            } else {
+                alert('Switch classes successful.');
+            }
+
+            await fetch("http://localhost:5000/waitlist", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getWaitlist = async(ticket_no) => {
+        try {
+            const body = { ticket_no };
+            const response = await fetch("http://localhost:5000/get-waitlist", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            setWait(await response.json());
+
+            
+            
         } catch (error) {
             console.log(error);
         }
@@ -43,12 +91,39 @@ function View() {
                         <button onClick={() => {
                                 setShow(false);
                                 onSubmitForm(); 
-                                navigate("/");
+                                setStat('Canceled');
+                                state[0].canceled = stat;
                             }} 
                             className='tickets-prompt-btn'>
                             Yes
                         </button>
                         <button onClick={() => setShow(false)} className='tickets-prompt-btn'>
+                            No
+                        </button>
+                    </div>
+                </div>
+            </div> }
+
+            { flag && <div className='prompt-padding'>
+                <div className='tickets-prompt'>
+                    <p className='view-form-h1'>Are you sure you want to switch classes?</p>
+
+                    <p className='view-form-h4'>This may put you on a waitlist.</p>
+
+                    <div className='tickets-prompt-info'>
+                        <p className='view-form-h4-bold'>Waitlist position • {waitlist}</p>
+                    </div>
+                    
+                    <div className='tickets-prompt-options'>
+                        <button onClick={() => {
+                                setFlag(false);
+                                setWaitlist(ticket);
+                                navigate('/');
+                            }} 
+                            className='tickets-prompt-btn'>
+                            Yes
+                        </button>
+                        <button onClick={() => setFlag(false)} className='tickets-prompt-btn'>
                             No
                         </button>
                     </div>
@@ -73,7 +148,7 @@ function View() {
                 status={data.canceled} />) : 
 
             <div className='tickets-unavailable'>
-                <p className='view-form-h1'><i className="fas fa-frown"></i> No Bookings.</p>
+                <p className='view-form-h1'><i className="fas fa-frown"></i> No Bookings</p>
                 <Link to='/search-flight'>
                     <button className='login-guest-btn'>Book a flight</button>
                 </Link>
@@ -82,21 +157,39 @@ function View() {
         </div>
     );
 
-
-
     function Tickets(props) {
 
         function formatDate(timestamp) {
             return format(new Date(timestamp), 'h:mmaaa');
         }
 
-        let stat = '';
+        const [boardingPass, setBoardingPass] = useState(0);
 
         if (props.status === false) {
-            stat = 'Active';
+            setStat('Active');
         } else if (props.status === true){
-            stat = 'Canceled';
+            setStat('Canceled');
         }
+
+        useEffect(() => {
+            async function fetchData() {
+                try {
+                    const body = { props };
+                    const response = await fetch("http://localhost:5000/boarding-pass", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(body)
+                    });
+    
+                    setBoardingPass(await response.json());
+    
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        
+            fetchData();
+        }, []); 
 
     return(
         <div className='view-container'>
@@ -129,7 +222,7 @@ function View() {
                 </div>
             </div>
 
-            {stat !== 'Canceled' && <div className='view-btn-container'>
+            {stat !== 'Canceled' && boardingPass.length === 0 && <div className='view-btn-container'>
                 <button onClick={() => {
                         navigate("/checkin", { state: props });
                     }} 
@@ -143,6 +236,20 @@ function View() {
                     }} 
                     
                     className='view-form-h4'>Cancel booking
+                </p>
+            </div>} {boardingPass.length !== 0 && <div className='view-btn-container'>
+                <button onClick={() => {
+                            navigate("/boardingpass", { state: [props, boardingPass] });
+                    }} 
+                    className='view-btn'>
+                    View Boarding Pass
+                </button>
+                <p onClick={() => {
+                        setFlag(true);
+                        getWaitlist(props.ticketNumber);
+                        setTicket(props.ticketNumber);
+                    }} 
+                    className='view-form-h4'>Switch class
                 </p>
             </div> }
         </div>

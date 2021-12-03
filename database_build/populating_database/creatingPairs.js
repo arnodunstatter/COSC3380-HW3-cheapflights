@@ -1,6 +1,6 @@
 const {Client} = require('pg');
 
-const creds = require('./creds.json');
+const creds = require('../creds.json');
 const client = new Client(creds);
 
 async function makeGatePairs() {

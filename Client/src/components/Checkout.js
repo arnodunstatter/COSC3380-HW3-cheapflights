@@ -177,8 +177,8 @@ function Checkout() {
                 <p className='checkout-form-h4'>{state.bookingType}</p>
 
                 <p className='checkout-form-h2'>{state.flightData.desFlightData.departureLoc[0]} to {
-                    (state.flightData.arrivalFlightData.typeFlight == "Direct Flight") ?
-                        state.flightData.arrivalFlightData.arrivalLoc[0] : state.flightData.arrivalFlightData.arrivalLoc[1]}</p>
+                    (state.flightData.desFlightData.typeFlight == "Direct Flight") ?
+                        state.flightData.desFlightData.arrivalLoc[0] : state.flightData.desFlightData.arrivalLoc[1]}</p>
                 <p className='checkout-form-h3'>{state.flightData.desFlightData.departureDate[0]}</p>
 
                 <p className='checkout-form-h4'>CheapFlights Airlines {state.flightNums[0]}</p>

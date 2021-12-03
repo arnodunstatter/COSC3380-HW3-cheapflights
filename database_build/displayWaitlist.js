@@ -18,11 +18,7 @@ async function main() {
             throw (e);
         }
 
-        var ticket_no = "1";
         await displayWaitList(client, ticket_no);
-
-
-
 
         throw ("Ending Correctly");
     } catch (e) {

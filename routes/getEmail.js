@@ -1,8 +1,9 @@
- 
+const fs = require('fs');
+
 module.exports = app => {
     app.post('/get-email', async(req, res) => {
         main(req.body.value);
-        var fs = require("fs");
+
         async function main(email_address) {
             //now we make our client using our creds
             const {
@@ -26,21 +27,28 @@ module.exports = app => {
             } catch (e) {
                 console.error(e);
                 client.end();
+                console.log("Disconneced");
+                console.log("Process ending");
             }
         }
         
         async function loginDisplayTickets(client, email_address){
             try {
-        
-                await client.query("BEGIN;"); //start our transaction
-        
+
                 //displays 1
                 //ticket_no, flight_no, aircraft_code, aircraft_name, passport_no, airport_code, airport_name, departure_time, 
                 //departing_city, departing_country, airport_code, airport_name, arrival_time, arrival_city, 
                 //arrival_country, seat_class, book_ref, total_amount 
         
-                let displayTicketsQuery = `
-                SELECT t.ticket_no, f.flight_no, plane.aircraft_code, plane.aircraft_name, p.passport_no, dep.airport_code AS departure_airport_code, dep.airport_name AS departure_airport_name, f.departure_time, b.canceled, 
+                async function clientQueryAndWriteToQuerySQL(client, transactionStr)
+                {
+                    fs.appendFileSync("query.sql", transactionStr+"\r", function (err) {
+                        console.log(err);
+                    });
+                    return await client.query(transactionStr);
+                }
+            var display_tickets = await clientQueryAndWriteToQuerySQL(client,
+                `\r\rSELECT t.ticket_no, f.flight_no, plane.aircraft_code, plane.aircraft_name, p.passport_no, dep.airport_code AS departure_airport_code, dep.airport_name AS departure_airport_name, f.departure_time, b.canceled, 
                 dep.city_name AS departing_city, dep.country AS departing_country, arr.airport_code AS arrival_airport_code, arr.airport_name AS arrival_airport_name, f.arrival_time, arr.city_name AS arrival_city, 
                 arr.country AS arrival_country, t.seat_class, b.book_ref, b.total_amount 
                 FROM tickets AS t
@@ -50,20 +58,11 @@ module.exports = app => {
                 LEFT JOIN airport_cities AS dep ON dep.airport_code = f.departure_airport_code
                 LEFT JOIN passengers AS p USING(passport_no)
                 LEFT JOIN aircraft AS plane USING(aircraft_code)
-                WHERE email_address = '${email_address}';`
-                var display_tickets = await client.query(displayTicketsQuery);
-                fs.appendFileSync("query.sql", 'Display Tickets: \n'+displayTicketsQuery + "\r", function (err) {
-                    console.log(err);
-                });
-
-                res.json(display_tickets.rows);
-
-                console.log(display_tickets.rows);
+                WHERE email_address = '${email_address}';`); 
         
-                await client.query("COMMIT;");
+                res.json(display_tickets.rows);
         
             } catch (e) {
-                await client.query("ROLLBACK;");
                 throw (e); //will bypass the "Ending Correctly" throw
             }
         }

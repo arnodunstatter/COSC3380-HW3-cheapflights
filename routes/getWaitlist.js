@@ -1,8 +1,10 @@
+var fs = require("fs");
+
 module.exports = app => {
     app.post('/get-waitlist', async (req, res) => {
-        console.log(req.body.props.ticketNumber);
-        var fs = require("fs");
-        main(req.body.props.ticketNumber);
+
+        main(req.body.ticket_no);
+
         async function main(ticket_no) {
             //now we make our client using our creds
             const {
@@ -19,7 +21,7 @@ module.exports = app => {
                     console.log("Problem connecting client");
                     throw (e);
                 }
-
+                
                 await displayWaitList(client, ticket_no);
 
                 throw ("Ending Correctly");
@@ -29,39 +31,53 @@ module.exports = app => {
                 console.log("Disconneced");
                 console.log("Process ending");
             }
+
         }
 
         async function displayWaitList(client, ticket_no) {
-
-            let getFlightNumQuery = `SELECT book_ref, ticket_no, passport_no, flight_no \n
-            FROM passengers LEFT JOIN tickets USING(passport_no) WHERE ticket_no = ${ticket_no}`;
-            var query = await client.query(getFlightNumQuery)
-            var flight_no = query.rows[0]["flight_no"];
-            console.log(query.rows)
-
-            fs.appendFileSync("query.sql",
-                "\n\rObtain waitlist based on ticket number: \n\n" + getFlightNumQuery + "\r", function (err) {
+            async function clientQueryAndWriteToQuerySQL(client, transactionStr)
+            {
+                fs.appendFileSync("query.sql", transactionStr+"\r", function (err) {
                     console.log(err);
                 });
+                return await client.query(transactionStr);
+            }
+            
+            var query = await clientQueryAndWriteToQuerySQL(client,`\r\r
+        SELECT book_ref, ticket_no, passport_no, flight_no 
+        FROM passengers LEFT JOIN tickets USING(passport_no) 
+        WHERE ticket_no = ${ticket_no}`)
+            var flight_no = query.rows[0]["flight_no"];
 
-            let economyWaitlistQuery = `select * from economy_waitlist where flight_no = ${flight_no};`;
-            var economy_waitlist_query = await client.query(economyWaitlistQuery);
+            var economy_waitlist_query = await clientQueryAndWriteToQuerySQL(client,`\r\r
+        SELECT * 
+        FROM economy_waitlist 
+        WHERE flight_no = ${flight_no};`);
             var economy_waitlist = economy_waitlist_query.rows;
 
-            fs.appendFileSync("query.sql", economyWaitlistQuery + "\r", function (err) {
-                console.log(err);
-            });
-
-            let bussinessWaitListQuery = `select * from business_waitlist where flight_no = ${flight_no};`;
-            var business_waitlist_query = await client.query(bussinessWaitListQuery);
-            
-            fs.appendFileSync("query.sql", bussinessWaitListQuery + "\r", function (err) {
-                console.log(err);
-            });
-
+            var business_waitlist_query = await clientQueryAndWriteToQuerySQL(client,`\r\r
+        SELECT * 
+        FROM business_waitlist 
+        WHERE flight_no = ${flight_no};`);
             var business_waitlist = business_waitlist_query.rows;
-            res.json([economy_waitlist, business_waitlist]);
+        
+
+            if (economy_waitlist.length !== 0) {
+                res.json(economy_waitlist[0].position);
+            } else if (business_waitlist.length !== 0 ) {
+                res.json(business_waitlist[0].position);
+            } else {
+                res.json('0');
+            }
 
         }
+
+        // fs.appendFileSync("transaction.sql", " ", function (err) {
+        //     console.log(err);
+        //   });
+
+        //   fs.appendFileSync("query.sql", " ", function (err) {
+        //     console.log(err);
+        //   });
     });
-}
+};

@@ -1,5 +1,5 @@
 module.exports = app => {
-    app.post('/checkout-Confirmation', async (req, res) => {
+    app.post('/checkout-confirmation', async (req, res) => {
         var fs = require("fs");
         main(req.body.flight_nos, req.body.economySeats, req.body.businessSeats, req.body.discount_code, req.body.card_no, req.body.passengersInfo);
         
@@ -37,7 +37,6 @@ module.exports = app => {
                 console.log("Disconneced");
                 console.log("Process ending");
                 res.json(e.detail);
-                process.exit();
             }
 
         }

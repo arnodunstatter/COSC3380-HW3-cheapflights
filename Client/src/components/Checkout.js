@@ -317,10 +317,6 @@ function PassengerInfo(props) {
                 
                 <button className='search-btn-main' onClick={transferData}>Confirm</button>
             </div>
-
-            
-           
-          
         </div>
     )
 }

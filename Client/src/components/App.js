@@ -27,6 +27,9 @@ function App() {
             <Link className='link' to='/'>
               <p className='app-logo'>Cheap<span>Flights</span></p>
             </Link>
+
+            <a href="https://github.com/gabrielzurc10/database-proj">Github</a>
+
           </header>
 
           <section>

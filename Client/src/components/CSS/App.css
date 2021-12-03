@@ -13,7 +13,7 @@
   box-shadow: 0 0 10px #d9d9d9;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   z-index: 99;
   padding: 4px;
 }
@@ -31,7 +31,6 @@
 
 .app-logo {
   color:#C60039;
-  margin-left: 200px;
   font-family: 'Anton', sans-serif;
   font-size: 1.5rem;
   cursor: pointer;

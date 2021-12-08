@@ -74,6 +74,22 @@ function View() {
             console.log(error);
         }
     }
+
+    const populateCities = async () => {
+
+        try {
+            const body = {}
+            const response = await fetch("http://localhost:5000/search-flight", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            //console.log(await response.json())
+            navigate("/search-flight", { state: await response.json() });
+        } catch (error) {
+            console.log(error);
+        }
+    }
     
     return (
         <div className='tickets-container'>
@@ -150,9 +166,7 @@ function View() {
 
             <div className='tickets-unavailable'>
                 <p className='view-form-h1'><i className="fas fa-frown"></i> No Bookings</p>
-                <Link to='/search-flight'>
-                    <button className='login-guest-btn'>Book a flight</button>
-                </Link>
+                <button className='login-guest-btn' onClick={populateCities}>Book a flight</button>
             </div> }
             
         </div>

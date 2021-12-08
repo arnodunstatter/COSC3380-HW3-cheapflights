@@ -9,8 +9,6 @@ import ViewFlights from './ViewFlights';
 import Checkout from './Checkout';
 import Checkin from './Checkin';
 import BoardingPass from './BoardingPass';
-import { useSelector, useDispatch } from "react-redux";
-
 
 import './CSS/App.css';
 
@@ -22,22 +20,31 @@ import {
 } from "react-router-dom";
 
 function App() {
-  //const functionName = useSelector(state => state.flightSlice.functionName)
 
-  const getSQL = async(fileN) => {
-    try {
-      const body = { fileName: fileN}
-      const response = await fetch("http://localhost:5000/routes/grabSql", {
+  const [sql, setSql] = useState();
+  const [trans, setTrans] = useState();
+
+  const [sqlShow, setSqlShow] = useState(false);
+  const [transShow, setTransShow] = useState(false);
+
+  const getSQL = async () => {
+    const response = await fetch("http://localhost:5000/get-sql", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-      });
-      console.log(await response.json())
-    } catch (error) {
-      console.log(error);     
-    }
+        headers: { "Content-Type": "application/json" }
+    });
+
+    setSql(await response.json());
   }
- 
+
+  const getTrans = async () => {
+
+    const response = await fetch("http://localhost:5000/get-trans", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    setTrans(await response.json());
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -49,10 +56,19 @@ function App() {
               <p className='app-logo'>Cheap<span>Flights</span></p>
             </Link>
 
-            <a style={{ display: "table-cell" }} href="https://github.com/gabrielzurc10/database-proj" target="gitHub">Github</a>
+            <a className='view-form-h3' style={{ display: "table-cell" }} href="https://github.com/gabrielzurc10/database-proj" target="gitHub">Github</a>
 
-            <button onClick={() => getSQL("query.sql")} className='view-form-h3'>SQL</button>
-            <button onClick={() => getSQL("transaction.sql")} className='view-form-h3'>Transactions</button>
+            <p onClick={() => {
+              getSQL();
+              setSqlShow(!sqlShow);
+              setTransShow(false);
+            }} className='view-form-h3'>SQL</p>
+
+            <p onClick={() => {
+              getTrans();
+              setTransShow(!transShow);
+              setSqlShow(false);
+            }} className='view-form-h3'>Transactions</p>
 
           </header>
 
@@ -68,6 +84,13 @@ function App() {
             </Routes>
           </section>
 
+          {sqlShow && <div className='side-window'>
+            <pre>{sql}</pre>
+          </div>}
+
+          {transShow && <div className='side-window'>
+            <pre>{trans}</pre>
+          </div>}
 
         </div>
       </Router>

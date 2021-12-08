@@ -1,7 +1,7 @@
 {
-    "host":"fanny.db.elephantsql.com",
-    "user":"hrpqbrjx", 
-    "password":"xlF9qioPrZmMaHnm-x473GN8-NcYrkve",
+    "host": "3380db.cs.uh.edu",
+    "user": "dbs020",
+    "password": "dbs020",
     "port": 5432,
-    "database": "hrpqbrjx"
+    "database": "COSC3380"
 }

@@ -15,7 +15,7 @@ module.exports = app => {
 
             try {
 
-                queries = findSQL("SELECT", fileName);
+                queries = findSQL(uniqueIdentifierStr, fileName);
                 console.log(queries)
                 res.json(queries);
                 throw ("Ending Correctly");

@@ -9,6 +9,8 @@ import ViewFlights from './ViewFlights';
 import Checkout from './Checkout';
 import Checkin from './Checkin';
 import BoardingPass from './BoardingPass';
+import { useSelector, useDispatch } from "react-redux";
+
 
 import './CSS/App.css';
 
@@ -20,6 +22,7 @@ import {
 } from "react-router-dom";
 
 function App() {
+  //const functionName = useSelector(state => state.flightSlice.functionName)
 
   const getSQL = async(fileN) => {
     try {

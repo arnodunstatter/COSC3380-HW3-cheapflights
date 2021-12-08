@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 module.exports = app => {
     app.post('/search-flight/flights', async (req, res) => {
         main(req.body.departure_date, req.body.departureCity, req.body.arrivalCity, req.body.numPassenger, req.body.seatClass);

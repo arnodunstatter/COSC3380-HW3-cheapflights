@@ -14,6 +14,8 @@ require('./routes/getCityList')(app);
 require('./routes/bookingTransaction')(app); 
 require('./routes/waitlist')(app); 
 require('./routes/getWaitlist')(app); 
+require('./routes/getSql')(app); 
+require('./routes/getTrans')(app); 
 require('./routes/grabSql')(app); 
 
 app.listen(5000, () => {

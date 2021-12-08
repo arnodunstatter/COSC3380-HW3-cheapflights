@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 import Search from './Search';
 import View from './View';
 import Login from './Login';
@@ -18,6 +20,32 @@ import {
 } from "react-router-dom";
 
 function App() {
+
+  const [sql, setSql] = useState();
+  const [trans, setTrans] = useState();
+
+  const [sqlShow, setSqlShow] = useState(false);
+  const [transShow, setTransShow] = useState(false);
+
+  const getSQL = async () => {
+    const response = await fetch("http://localhost:5000/get-sql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    setSql(await response.json());
+  }
+
+  const getTrans = async () => {
+
+    const response = await fetch("http://localhost:5000/get-trans", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    setTrans(await response.json());
+  }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Router>
@@ -28,7 +56,19 @@ function App() {
               <p className='app-logo'>Cheap<span>Flights</span></p>
             </Link>
 
-            <a style={{ display: "table-cell" }} href="https://github.com/gabrielzurc10/database-proj" target="gitHub">Github</a>
+            <a className='view-form-h3' style={{ display: "table-cell" }} href="https://github.com/gabrielzurc10/database-proj" target="gitHub">Github</a>
+
+            <p onClick={() => {
+              getSQL();
+              setSqlShow(!sqlShow);
+              setTransShow(false);
+            }} className='view-form-h3'>SQL</p>
+
+            <p onClick={() => {
+              getTrans();
+              setTransShow(!transShow);
+              setSqlShow(false);
+            }} className='view-form-h3'>Transactions</p>
 
           </header>
 
@@ -43,6 +83,15 @@ function App() {
               <Route path ='/boardingpass' element={<BoardingPass />} />
             </Routes>
           </section>
+
+          {sqlShow && <div className='side-window'>
+            <pre>{sql}</pre>
+          </div>}
+
+          {transShow && <div className='side-window'>
+            <pre>{trans}</pre>
+          </div>}
+
         </div>
       </Router>
     </LocalizationProvider>

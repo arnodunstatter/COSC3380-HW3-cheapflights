@@ -28,7 +28,7 @@ function App() {
               <p className='app-logo'>Cheap<span>Flights</span></p>
             </Link>
 
-            <a href="https://github.com/gabrielzurc10/database-proj">Github</a>
+            <a style={{ display: "table-cell" }} href="https://github.com/gabrielzurc10/database-proj" target="gitHub">Github</a>
 
           </header>
 

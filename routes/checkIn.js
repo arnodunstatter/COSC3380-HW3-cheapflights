@@ -52,16 +52,16 @@ const fs = require("fs");
                 await clientQueryAndWriteToTransactionSQL(client,"BEGIN;"); //start our transaction
 
                 await clientQueryAndWriteToTransactionSQL(client,
-        `INSERT INTO baggage_info(number_of_bags)
-            VALUES(${number_of_bags});`
+`INSERT INTO baggage_info(number_of_bags)
+    VALUES(${number_of_bags});`
                 );
 
 
                 var baggage_id = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT baggage_id
-            FROM baggage_info
-            ORDER BY baggage_id DESC 
-            LIMIT 1;`
+`SELECT baggage_id
+    FROM baggage_info
+    ORDER BY baggage_id DESC 
+    LIMIT 1;`
                 ); //get baggage_id
 
 
@@ -71,9 +71,9 @@ const fs = require("fs");
 
                 //2: get flight_no from flights table
                 var flight_no_query = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT flight_no
-            FROM tickets
-            WHERE ticket_no = ${ticket_no};`
+`SELECT flight_no
+    FROM tickets
+    WHERE ticket_no = ${ticket_no};`
                 );
 
                 var flight_no = flight_no_query.rows[0]["flight_no"];
@@ -81,8 +81,8 @@ const fs = require("fs");
 
                 //3: get seat_no by first determining seat_class
                 var seat_class_query = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT seat_class
-            FROM tickets\rWHERE ticket_no = ${ticket_no};`
+`SELECT seat_class
+    FROM tickets\rWHERE ticket_no = ${ticket_no};`
                 );
             
 
@@ -93,10 +93,10 @@ const fs = require("fs");
                 if (seat_class == "economy") {
 
                     var e_seat_no_query = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT COUNT(*)+1
-            FROM boarding_passes
-            LEFT JOIN tickets USING(ticket_no)
-            WHERE tickets.flight_no = ${flight_no}\rAND seat_class = '${seat_class}';`
+`SELECT COUNT(*)+1
+    FROM boarding_passes
+    LEFT JOIN tickets USING(ticket_no)
+    WHERE tickets.flight_no = ${flight_no}\rAND seat_class = '${seat_class}';`
                     );
 
                     var e_seat_position = e_seat_no_query.rows[0]["?column?"];
@@ -106,7 +106,7 @@ const fs = require("fs");
                         throw ("Economy Seats Full at 10");
                     }
                     var e_seat_no = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT CONCAT('E', ${e_seat_position});`
+`SELECT CONCAT('E', ${e_seat_position});`
                     );
 
                     var e_seat_no = e_seat_no.rows[0]["concat"];
@@ -116,11 +116,11 @@ const fs = require("fs");
                     //3.2: get business_seat_no
                 } else if (seat_class == "business") {
                     var b_seat_no_query = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT COUNT(*)+1
-            FROM boarding_passes
-            LEFT JOIN tickets USING(ticket_no)
-                WHERE tickets.flight_no = ${flight_no}
-                    AND seat_class = '${seat_class}';`
+`SELECT COUNT(*)+1
+    FROM boarding_passes
+    LEFT JOIN tickets USING(ticket_no)
+        WHERE tickets.flight_no = ${flight_no}
+            AND seat_class = '${seat_class}';`
                     );
 
                     var b_seat_position = b_seat_no_query.rows[0]["?column?"];
@@ -130,7 +130,7 @@ const fs = require("fs");
                         throw ("Business Seats Full at 10")
                     }
                     var b_seat_no = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT CONCAT('B', ${b_seat_position});`
+`SELECT CONCAT('B', ${b_seat_position});`
                     );
 
                     var b_seat_no = b_seat_no.rows[0]["concat"];
@@ -140,16 +140,18 @@ const fs = require("fs");
 
                 //4: get boarding_no
                 var boarding_no_query = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT COUNT(*)+1
-            FROM boarding_passes
-            WHERE flight_no = ${flight_no};`
+`SELECT COUNT(*)+1
+    FROM boarding_passes
+    WHERE flight_no = ${flight_no};`
                 );
 
                 var boarding_no = boarding_no_query.rows[0]["?column?"]
 
 
                 //5 & 6: get departing gate_no & baggage_claim
-                var gate_no_baggage_claim_query = await client.query(`SELECT departure_gate, baggage_claim\rFROM flights\rWHERE flight_no = ${flight_no};\r\r`);
+                var gate_no_baggage_claim_query = await clientQueryAndWriteToTransactionSQL(client,
+`SELECT departure_gate, baggage_claim\rFROM flights\rWHERE flight_no = ${flight_no};\r\r`
+                );
 
                 var gate_no = gate_no_baggage_claim_query.rows[0]["departure_gate"];
                 var baggage_claim = gate_no_baggage_claim_query.rows[0]["baggage_claim"];
@@ -158,8 +160,8 @@ const fs = require("fs");
                 //7: baggage_id given (skipped)
 
                 await clientQueryAndWriteToTransactionSQL(client,
-        `INSERT INTO boarding_passes(ticket_no, flight_no, seat_no, boarding_no, gate_no, baggage_claim, baggage_id)
-            VALUES(${ticket_no}, ${flight_no}, '${seat_no}',${boarding_no},'${gate_no}','${baggage_claim}',${baggage_id});`);
+`INSERT INTO boarding_passes(ticket_no, flight_no, seat_no, boarding_no, gate_no, baggage_claim, baggage_id)
+    VALUES(${ticket_no}, ${flight_no}, '${seat_no}',${boarding_no},'${gate_no}','${baggage_claim}',${baggage_id});`);
         
                 //la fin 
                 await clientQueryAndWriteToTransactionSQL(client,"COMMIT;");

@@ -44,59 +44,59 @@ const fs = require('fs');
             }
             try {
                 //start our transaction
-                fs.appendFileSync("transaction.sql", `\r\r--Begin transaction for cancelBooking(client,${book_ref})\r`, function (err) {
+                fs.appendFileSync("transaction.sql", `\r\r--The following sql statements are part of the transaction for cancelBooking(client,${book_ref})\r`, function (err) {
                     console.log(err);
                 });
                 await clientQueryAndWriteToTransactionSQL(client, "BEGIN;");
                 //update the canceled status in the bookings
                 await clientQueryAndWriteToTransactionSQL(client,
-        `UPDATE bookings 
-            SET canceled = 't'
-            WHERE book_ref = ${book_ref};`
+`UPDATE bookings 
+    SET canceled = 't'
+    WHERE book_ref = ${book_ref};`
                 );
-
+        
                 //retrieve information about the canceled booking and the relevant flight_no
                 var canceled_booking_flight = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT flight_no
-            FROM tickets
-            WHERE book_ref = ${book_ref};`
+`SELECT flight_no
+    FROM tickets
+    WHERE book_ref = ${book_ref};`
                 );
-
+        
                 var flight_no = canceled_booking_flight.rows[0]["flight_no"];
-
+        
                 var canceled_booking_economy = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT economy_seats
-            FROM bookings
-            WHERE book_ref = ${book_ref};`
+`SELECT economy_seats
+    FROM bookings
+    WHERE book_ref = ${book_ref};`
                 );
                 var economy_seats = canceled_booking_economy.rows[0]["economy_seats"];
-
+        
                 var canceled_booking_business = await clientQueryAndWriteToTransactionSQL(client,
-        `SELECT business_seats
-            FROM bookings
-            WHERE book_ref = ${book_ref};`
+`SELECT business_seats
+    FROM bookings
+    WHERE book_ref = ${book_ref};`
                 );
                 var business_seats = canceled_booking_business.rows[0]["business_seats"];
-
-
+        
+        
                 //update available seats on the flight
                 if (economy_seats >= 1) {
                     await clientQueryAndWriteToTransactionSQL(client,
-        `UPDATE flights
-            SET available_economy_seats = available_economy_seats + ${economy_seats}
-            WHERE flight_no = ${flight_no};`);
-
+`UPDATE flights
+    SET available_economy_seats = available_economy_seats + ${economy_seats}
+    WHERE flight_no = ${flight_no};`);
+        
                 }
                 if (business_seats >= 1) {
                     await clientQueryAndWriteToTransactionSQL(client,
-        `UPDATE flights
-            SET available_business_seats = available_business_seats + ${business_seats}
-            WHERE flight_no = ${flight_no};`);
+`UPDATE flights
+    SET available_business_seats = available_business_seats + ${business_seats}
+    WHERE flight_no = ${flight_no};`);
                 }
-
-
+        
+        
                 await clientQueryAndWriteToTransactionSQL(client, "COMMIT;");
-
+        
             } catch (e) {
                 await clientQueryAndWriteToTransactionSQL(client, "ROLLBACK;");
                 console.log("ERROR: MAX 10 SEATS ONLY")

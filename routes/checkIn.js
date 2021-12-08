@@ -40,13 +40,13 @@ const fs = require("fs");
         async function checkIn(client, ticket_no, number_of_bags) {
             async function clientQueryAndWriteToTransactionSQL(client, transactionStr)
             {
-                fs.appendFileSync("transaction.sql", transactionStr+"\r", function (err) {
+                fs.appendFileSync("./Client/public/transaction.sql", transactionStr+"\r", function (err) {
                     console.log(err);
                 });
                 return await client.query(transactionStr);
             }
             try {
-                fs.appendFileSync("transaction.sql", `\r\r--The following sql statements are part of the transaction for checkIn(client,${ticket_no}, ${number_of_bags})\r`, function (err) {
+                fs.appendFileSync("./Client/public/transaction.sql", `\r\r--The following sql statements are part of the transaction for checkIn(client,${ticket_no}, ${number_of_bags})\r`, function (err) {
                     console.log(err);
                 });
                 await clientQueryAndWriteToTransactionSQL(client,"BEGIN;"); //start our transaction

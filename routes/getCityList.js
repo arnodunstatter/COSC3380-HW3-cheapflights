@@ -31,12 +31,12 @@ module.exports = app => {
             try {
                 async function clientQueryAndWriteToQuerySQL(client, transactionStr)
                 {
-                    fs.appendFileSync("query.sql", transactionStr+"\r", function (err) {
+                    fs.appendFileSync("./Client/public/query.sql", transactionStr+"\r", function (err) {
                         console.log(err);
                     });
                     return await client.query(transactionStr);
                 }
-                fs.appendFileSync("query.sql", `\r\r--The following sql statements are part of the query for fetchCities(client)\r`, function (err) {
+                fs.appendFileSync("./Client/public/query.sql", `\r\r--The following sql statements are part of the query for fetchCities(client)\r`, function (err) {
                     console.log(err);
                 });
                 let distinctCities = await clientQueryAndWriteToQuerySQL(client,

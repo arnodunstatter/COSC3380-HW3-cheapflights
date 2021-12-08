@@ -13,6 +13,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import { useDispatch } from "react-redux";
+import { setFunctionName } from './redux/flightSlice'
 
 
 function Checkout() {
@@ -23,6 +25,7 @@ function Checkout() {
     const location = useLocation();
     const state = location.state;
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [confirm, setConfirm] = useState(false);
     const [bookingResponse, setBookingResponse] = useState(""); 
@@ -79,10 +82,12 @@ function Checkout() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             }).then((value) => {
+                dispatch(setFunctionName("makeBooking"));
                 console.log("Successful Transaction!")
                 alert("Successful Transaction!");
                 navigate("/");
             }, reason => {
+                dispatch(setFunctionName("makeBooking"));
                 alert("Unsuccessful Transaction :'( ", reason);
                 console.error(reason); // Error!
             }

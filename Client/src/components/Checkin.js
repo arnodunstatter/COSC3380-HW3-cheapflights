@@ -3,7 +3,10 @@ import './CSS/Checkin.css';
 
 import { format } from 'date-fns';
 import TextField from "@mui/material/TextField";
-import {useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setFunctionName } from './redux/flightSlice'
+
 
 function Checkin () {
     const navigate = useNavigate();
@@ -11,6 +14,7 @@ function Checkin () {
     const [bags, setBags] = useState(0);
     const [show, setShow] = useState(false);
     const props = location.state;
+    const dispatch = useDispatch();
 
     function formatDate(timestamp) {
         return format(new Date(timestamp), 'h:mmaaa');
@@ -27,7 +31,7 @@ function Checkin () {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
-
+            dispatch(setFunctionName("checkIn"));
         } catch (error) {
             console.log(error);
         }

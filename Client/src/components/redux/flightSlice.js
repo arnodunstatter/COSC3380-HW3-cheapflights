@@ -13,7 +13,8 @@ export const flightSlice = createSlice({
         typeFlight: "Direct Flight", 
         desFlightNum: [],
         arrivalFlightNum: [],   
-        passengerNum: 1, 
+        passengerNum: 1,
+        functionName: "", 
     },
     reducers: {
         setFlights: (state, action) => {
@@ -44,13 +45,14 @@ export const flightSlice = createSlice({
         },
         setDepartureDate: (state, action) => {
             state.bookingType = action.payload;
-        }
-        
-        
+        },
+        setFunctionName: (state, action) => {
+            state.functionName = action.payload; 
+        } 
     },
 })
 
 // Action creators are generated for each case reducer function
-export const {  setPassengerNum, setFlights } = flightSlice.actions
+export const { setPassengerNum, setFlights, setFunctionName} = flightSlice.actions
 
 export default flightSlice.reducer

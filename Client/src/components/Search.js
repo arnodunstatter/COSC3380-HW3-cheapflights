@@ -11,7 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
-import { setPassengerNum } from './redux/flightSlice'
+import { setPassengerNum , setFunctionName} from './redux/flightSlice'
 
 
 function Search() {
@@ -59,27 +59,6 @@ function Search() {
         },
     });
 
-    // fetch the city list
-    /*
-    useEffect(() => {
-        /*
-        try {
-            const body = { departureDate, departureCity, arrivalCity, numPassenger, seatClass };
-            const response = await fetch("http://localhost:5000/search-flight/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-            });
-            console.log(await response.json());
-            //state: await response.json();
-        } catch (error) {
-            console.log(error);
-        }
-        
-    }, [])
-*/
-
-
     const search = async() => {
         setLoading(true);
 
@@ -87,7 +66,6 @@ function Search() {
         let arrival_date = arrivalDate.getFullYear() + '-' + (arrivalDate.getMonth() + 1) + '-' + arrivalDate.getDate();
         
         dispatch(setPassengerNum(numPassenger));
-
         try {
             const body = { departure_date, departureCity, arrivalCity, numPassenger, seatClass };
             console.log(body); 
@@ -104,8 +82,10 @@ function Search() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(body2)
                 });
+                dispatch(setFunctionName("findFlight"));
                 navigate("/search-flight/flights", { state: [{ numPassenger, bookingType, seatClass }, await response.json(), await response2.json() ] });
             } else {
+                dispatch(setFunctionName("findFlight"));
                 navigate("/search-flight/flights", { state: [{ numPassenger, bookingType, seatClass }, await response.json()] });
             }
         } catch (error) {

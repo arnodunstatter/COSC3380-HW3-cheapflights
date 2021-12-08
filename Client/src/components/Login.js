@@ -2,17 +2,21 @@ import React, { useState } from 'react';
 import './CSS/Login.css'
 
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { setFunctionName } from './redux/flightSlice'
 
 function Login() {
     ///////////////////////////////////States and functions//////////////////////////////////////
     const [ value, setValue ] = useState();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     ///////////////////////////////////End of section////////////////////////////////////////////
 
     ///////////////////////////////////Queries///////////////////////////////////////////////////
     const onSubmitForm = async(e) => {
         e.preventDefault();
-
         try {
             const body = { value };
             const response = await fetch("http://localhost:5000/get-email", {
@@ -20,7 +24,7 @@ function Login() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
-
+            dispatch(setFunctionName("loginDisplayTickets"));
             navigate("/view-flight", { state: await response.json() });
         } catch (error) {
             console.log(error);
@@ -37,11 +41,13 @@ function Login() {
                 body: JSON.stringify(body)
             });
             //console.log(await response.json())
+            dispatch(setFunctionName("fetchCities"));
             navigate("/search-flight", { state: await response.json() });
         } catch (error) {
             console.log(error);
         }
     }
+
     return (
         <div className='login-container'>
             <p className='login-header'><span>Cheap<span>Flights</span></span></p>

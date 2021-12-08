@@ -21,29 +21,20 @@ import {
 
 function App() {
 
-  const [sql, setSql] = useState();
-  const [trans, setTrans] = useState();
-
-  const [sqlShow, setSqlShow] = useState(false);
-  const [transShow, setTransShow] = useState(false);
-
-  const getSQL = () => {
-
-    fetch('/query.sql')
-    .then((r) => r.text())
-    .then(text  => {
-      setSql(text);
-    })  
+  const getSQL = async(fileN) => {
+    try {
+      const body = { fileName: fileN}
+      const response = await fetch("http://localhost:5000/routes/grabSql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      console.log(await response.json())
+    } catch (error) {
+      console.log(error);     
+    }
   }
-
-  const getTrans = () => {
-
-    fetch('/transaction.sql')
-    .then((r) => r.text())
-    .then(text  => {
-      setTrans(text);
-    })  
-  }
+ 
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -57,16 +48,8 @@ function App() {
 
             <a style={{ display: "table-cell" }} href="https://github.com/gabrielzurc10/database-proj" target="gitHub">Github</a>
 
-            <p onClick={() => {
-              getSQL();
-              setSqlShow(!sqlShow);
-              setTransShow(false);
-            }} className='view-form-h3'>SQL</p>
-            <p onClick={() => {
-              getTrans();
-              setTransShow(!transShow);
-              setSqlShow(false);
-            }} className='view-form-h3'>Transactions</p>
+            <button onClick={() => getSQL("query.sql")} className='view-form-h3'>SQL</button>
+            <button onClick={() => getSQL("transaction.sql")} className='view-form-h3'>Transactions</button>
 
           </header>
 
@@ -82,13 +65,6 @@ function App() {
             </Routes>
           </section>
 
-          {sqlShow && <div className='side-window'>
-            <p>{sql}</p>
-          </div>}
-
-          {transShow && <div className='side-window'>
-            <p>{trans}</p>
-          </div>}
 
         </div>
       </Router>

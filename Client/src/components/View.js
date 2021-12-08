@@ -5,10 +5,14 @@ import './CSS/View.css';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FlagSharp } from '@mui/icons-material';
 
+import { useDispatch } from "react-redux";
+import { setFunctionName } from './redux/flightSlice'
+
 function View() {
     const location = useLocation();
     const state = location.state;
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [show, setShow] = useState(false);
     const [flag, setFlag] = useState(false);
@@ -27,7 +31,7 @@ function View() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
-
+            dispatch(setFunctionName("cancelBooking"));
             setStat('Canceled');
             
         } catch (error) {
@@ -51,6 +55,7 @@ function View() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
+            dispatch(setFunctionName("attemptToChangeSeatClass"));
 
         } catch (error) {
             console.log(error);
@@ -65,11 +70,8 @@ function View() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
-
+            dispatch(setFunctionName("displayWaitList"));
             setWait(await response.json());
-
-            
-            
         } catch (error) {
             console.log(error);
         }
@@ -84,7 +86,7 @@ function View() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
-            //console.log(await response.json())
+            dispatch(setFunctionName("fetchCities"));
             navigate("/search-flight", { state: await response.json() });
         } catch (error) {
             console.log(error);

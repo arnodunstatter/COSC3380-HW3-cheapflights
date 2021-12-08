@@ -42,7 +42,7 @@
             //their present tickets.seat_class is the leavingSeatClass
             async function clientQueryAndWriteToTransactionSQL(client, transactionStr)
             {
-                fs.appendFileSync("./Client/public/transaction.sql", transactionStr+"\r", function (err) {
+                fs.appendFileSync("transaction.sql", transactionStr+"\r", function (err) {
                     console.log(err);
                 });
                 return await client.query(transactionStr);
@@ -60,7 +60,7 @@
 
 
                 //begin our transaction
-                fs.appendFileSync("./Client/public/transaction.sql",`\r\r--The following sql statements are part of the transaction for attemptToChangeSeatClass(client,${ticket_no})\r`);
+                fs.appendFileSync("transaction.sql",`\r\r--The following sql statements are part of the transaction for attemptToChangeSeatClass(client,${ticket_no})\r`);
                 await clientQueryAndWriteToTransactionSQL(client,"BEGIN;");
                 var leavingSeatClass = await clientQueryAndWriteToTransactionSQL(client,
 `SELECT seat_class 

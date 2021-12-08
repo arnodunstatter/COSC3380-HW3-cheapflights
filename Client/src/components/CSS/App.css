@@ -58,3 +58,14 @@
     opacity: 1;
   }
 }
+
+.side-window {
+  display: flex;
+  position: fixed;
+  left: 0;
+  height: 100%;
+  width: 500px;
+  box-shadow: 0 0 10px #d9d9d9;
+  animation: fade 0.2s ease;
+  z-index: 98;
+}

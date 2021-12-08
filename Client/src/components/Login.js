@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './CSS/Login.css'
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
     ///////////////////////////////////States and functions//////////////////////////////////////

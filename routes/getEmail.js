@@ -42,12 +42,12 @@ module.exports = app => {
         
                 async function clientQueryAndWriteToQuerySQL(client, transactionStr)
                 {
-                    fs.appendFileSync("query.sql", transactionStr+"\r", function (err) {
+                    fs.appendFileSync("./Client/public/query.sql", transactionStr+"\r", function (err) {
                         console.log(err);
                     });
                     return await client.query(transactionStr);
                 }
-                fs.appendFileSync("query.sql", `\r\r--The following sql statements are part of the query for loginDisplayTickets(client, ${email_address})\r`, function (err) {
+                fs.appendFileSync("./Client/public/query.sql", `\r\r--The following sql statements are part of the query for loginDisplayTickets(client, ${email_address})\r`, function (err) {
                     console.log(err);
                 });
             var display_tickets = await clientQueryAndWriteToQuerySQL(client,

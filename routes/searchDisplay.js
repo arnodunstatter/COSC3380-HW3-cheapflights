@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 module.exports = app => {
     app.post('/search-flight/flights', async (req, res) => {
         main(req.body.departure_date, req.body.departureCity, req.body.arrivalCity, req.body.numPassenger, req.body.seatClass);
@@ -50,12 +48,12 @@ module.exports = app => {
             try {
                 async function clientQueryAndWriteToTransactionSQL(client, transactionStr)
                 {
-                    fs.appendFileSync("query.sql", transactionStr+"\r", function (err) {
+                    fs.appendFileSync("./Client/public/query.sql", transactionStr+"\r", function (err) {
                         console.log(err);
                     });
                     return await client.query(transactionStr);
                 }
-                fs.appendFileSync("query.sql", `\r\r--The following sql statements are part of the query for findFlight(client, ${departure_date}, ${departure_city}, ${arrival_city}, ${passengerNum}, ${seat_class})\r`, function (err) {
+                fs.appendFileSync("./Client/public/query.sql", `\r\r--The following sql statements are part of the query for findFlight(client, ${departure_date}, ${departure_city}, ${arrival_city}, ${passengerNum}, ${seat_class})\r`, function (err) {
                     console.log(err);
                 });
                 var flightInfo = await clientQueryAndWriteToTransactionSQL(client,

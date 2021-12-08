@@ -40,7 +40,7 @@ module.exports = app => {
 
                 async function clientQueryAndWriteToQuerySQL(client, transactionStr)
                 {
-                    fs.appendFileSync("./Client/public/query.sql", transactionStr+`\r\r--The following sql statements are part of the query for for getBoardingPass(client,${ticket_no})\r`, function (err) {
+                    fs.appendFileSync("query.sql", transactionStr+`\r\r--The following sql statements are part of the query for for getBoardingPass(client,${ticket_no})\r`, function (err) {
                         console.log(err);
                     });
                     return await client.query(transactionStr);

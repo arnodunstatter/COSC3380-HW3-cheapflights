@@ -37,14 +37,14 @@ const fs = require('fs');
             /** start cancellation transaction */
             //if customer requests for a cancellation, select book_ref for the flight they want to cancel and set canceled to true
             async function clientQueryAndWriteToTransactionSQL(client, transactionStr) {
-                fs.appendFileSync("./Client/public/transaction.sql", transactionStr + "\r", function (err) {
+                fs.appendFileSync("transaction.sql", transactionStr + "\r", function (err) {
                     console.log(err);
                 });
                 return await client.query(transactionStr);
             }
             try {
                 //start our transaction
-                fs.appendFileSync("./Client/public/transaction.sql", `\r\r--The following sql statements are part of the transaction for cancelBooking(client,${book_ref})\r`, function (err) {
+                fs.appendFileSync("transaction.sql", `\r\r--The following sql statements are part of the transaction for cancelBooking(client,${book_ref})\r`, function (err) {
                     console.log(err);
                 });
                 await clientQueryAndWriteToTransactionSQL(client, "BEGIN;");

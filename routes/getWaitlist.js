@@ -37,12 +37,12 @@ module.exports = app => {
 async function displayWaitList(client, ticket_no) {
     async function clientQueryAndWriteToQuerySQL(client, transactionStr)
     {
-        fs.appendFileSync("./Client/public/query.sql", transactionStr+"\r", function (err) {
+        fs.appendFileSync("query.sql", transactionStr+"\r", function (err) {
             console.log(err);
         });
         return await client.query(transactionStr);
     }
-    fs.appendFileSync("./Client/public/query.sql", `\r\r--The following sql statements are part of the query for displayWaitList(client, ${ticket_no})\r`, function (err) {
+    fs.appendFileSync("query.sql", `\r\r--The following sql statements are part of the query for displayWaitList(client, ${ticket_no})\r`, function (err) {
         console.log(err);
     });
     var query = await clientQueryAndWriteToQuerySQL(client,
